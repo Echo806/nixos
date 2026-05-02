@@ -23,7 +23,8 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-  
+
+  # 启用 Flakes 特性以及配套的船新 nix 命令行工具
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
 
@@ -46,7 +47,7 @@
     layout = "cn";
     variant = "";
   };
-  
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
@@ -93,6 +94,7 @@
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
+
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
