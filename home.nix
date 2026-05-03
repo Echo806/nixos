@@ -33,12 +33,12 @@
     steam
     claude-code    
     qq
-    fcitx5
-    rime-ice
     splayer
     codex
     vscode
   ];
+  
+
   
   # Note: Configure API keys and sensitive settings outside of this file
   # Store them in environment variables or use a secure secrets management system
