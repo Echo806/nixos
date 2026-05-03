@@ -31,14 +31,23 @@
   # 建议将所有 GUI 软件，以及与 OS 关系不大的 CLI 软件，都通过 home.packages 安装
   home.packages = with pkgs;[
     steam
-    
+    claude-code    
     qq
     fcitx5
     rime-ice
     splayer
-
+    codex
+    vscode
   ];
-
+  
+  # Note: Configure API keys and sensitive settings outside of this file
+  # Store them in environment variables or use a secure secrets management system
+  # Uncomment and configure proxy if needed:
+  # home.sessionVariables = {
+  #   http_proxy = "http://127.0.0.1:7897";
+  #   https_proxy = "http://127.0.0.1:7897";
+  #   all_proxy = "socks5:127.0.0.1:7897";
+  # };
 
 
   # This value determines the Home Manager release that your
@@ -50,4 +59,7 @@
   # the Home Manager release notes for a list of state version
   # changes in each release.
   home.stateVersion = "25.11";
+
+  # Enable programs module for home-manager
+  programs.home-manager.enable = true;
 }
