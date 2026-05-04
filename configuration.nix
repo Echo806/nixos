@@ -85,7 +85,6 @@
 
   # Install firefox.
   programs.firefox.enable = true;
-
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -98,8 +97,17 @@
   ];
 
 
+  nix.settings = {
+    extra-substituters = [
+      "https://cache.garnix.io"
+      "https://attic.xuyh0120.win/lantian"
+    ];
 
-
+    extra-trusted-public-keys = [
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+    ];
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
