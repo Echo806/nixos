@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     # home-manager, used for managing user configuration
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -14,13 +15,14 @@
     };
   };
 
-  outputs = inputs@{ nixpkgs, home-manager, ... }: {
+  outputs = inputs@{ self,nixpkgs, home-manager,nixos-hardware, ... }: {
     nixosConfigurations = {
       # 这里的 my-nixos 替换成你的主机名称
       nixos = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
         modules = [
           ./configuration.nix
-
+          nixos-hardware.nixosModules.lenovo-thinkpad-x250
           # 将 home-manager 配置为 nixos 的一个 module
           # 这样在 nixos-rebuild switch 时，home-manager 配置也会被自动部署
           home-manager.nixosModules.home-manager

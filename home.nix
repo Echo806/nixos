@@ -37,7 +37,17 @@
     codex
     vscode
   ];
-  
+
+
+  programs.git = {
+    enable = true;
+    settings={
+      user={
+        email="2535212471@qq.com";
+        name="Echo806";
+      };
+    };
+  };
 
   
   # Note: Configure API keys and sensitive settings outside of this file
