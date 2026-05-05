@@ -38,7 +38,8 @@
     splayer
     codex
     vscode
-    #wechat
+
+    clash-verge-rev
 
   ];
 
