@@ -41,6 +41,9 @@
       vscode
       wechat
       clash-verge-rev
+      marktext
+      google-chrome
+
     ])
     ++ [
       inputs.llm-agents.packages.${pkgs.system}.cc-switch-cli
@@ -65,6 +68,9 @@
     http_proxy = "http://127.0.0.1:7897";
     https_proxy = "http://127.0.0.1:7897";
     all_proxy = "socks5:127.0.0.1:7897";
+    GTK_IM_MODULE = "fcitx5";
+    QT_IM_MODULE = "fcitx5";
+    XMODIFIERS = "@im=fcitx5";
   };
 
 
