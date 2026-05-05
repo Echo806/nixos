@@ -19,8 +19,8 @@
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  networking.proxy.default = "http://127.0.0.1:7897/";
+  networking.proxy.noProxy = "127.0.0.1,localhost";
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -100,14 +100,18 @@
   nix.settings = {
     extra-substituters = [
       "https://cache.garnix.io"
-      "https://attic.xuyh0120.win/lantian"
+      #"https://attic.xuyh0120.win/lantian"
     ];
 
     extra-trusted-public-keys = [
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+      #"lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
     ];
   };
+
+  programs.clash-verge.enable = true;
+
+
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -123,10 +127,10 @@
   # services.openssh.enable = true;
 
   # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
+#   networking.firewall.allowedTCPPorts = [ ... ];
+#   networking.firewall.allowedUDPPorts = [ ... ];
+#   Or disable the firewall altogether.
+#   networking.firewall.enable = ;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

@@ -26,6 +26,8 @@
     "Xft.dpi" = 172;
   };
 
+
+
   # 通过 home.packages 安装一些常用的软件
   # 这些软件将仅在当前用户下可用，不会影响系统级别的配置
   # 建议将所有 GUI 软件，以及与 OS 关系不大的 CLI 软件，都通过 home.packages 安装
@@ -36,6 +38,8 @@
     splayer
     codex
     vscode
+    #wechat
+
   ];
 
 
@@ -49,15 +53,15 @@
     };
   };
 
-  
+
   # Note: Configure API keys and sensitive settings outside of this file
   # Store them in environment variables or use a secure secrets management system
   # Uncomment and configure proxy if needed:
-  # home.sessionVariables = {
-  #   http_proxy = "http://127.0.0.1:7897";
-  #   https_proxy = "http://127.0.0.1:7897";
-  #   all_proxy = "socks5:127.0.0.1:7897";
-  # };
+  home.sessionVariables = {
+    http_proxy = "http://127.0.0.1:7897";
+    https_proxy = "http://127.0.0.1:7897";
+    all_proxy = "socks5:127.0.0.1:7897";
+  };
 
 
   # This value determines the Home Manager release that your
