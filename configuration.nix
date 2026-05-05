@@ -83,6 +83,14 @@
     ];
   };
 
+  # CJK 中文字体，解决 splayer 等 Electron 应用汉字不显示问题
+  fonts.packages = with pkgs; [
+    noto-fonts-cjk-sans
+  ];
+
+  # 将 CJK 字体加入 sans-serif 别名，确保 Chromium/Electron 能正确回退
+  fonts.fontconfig.defaultFonts.sansSerif = [ "Noto Sans CJK SC" "Noto Sans" ];
+
   # Install firefox.
   programs.firefox.enable = true;
   # Allow unfree packages
