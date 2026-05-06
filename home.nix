@@ -47,14 +47,15 @@
       vscode
       wechat
       clash-verge-rev
-      marktext
+      # marktext  # 在 unstable 上构建失败 (node-gyp)，暂时禁用
       google-chrome
+      alacritty
       # Steam 只读取用户级 fontconfig，字体必须放入 home.packages
       noto-fonts-cjk-sans
       wqy_microhei
     ])
     ++ [
-      inputs.llm-agents.packages.${pkgs.system}.cc-switch-cli
+      inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.cc-switch-cli
     ];
 
 
@@ -79,6 +80,35 @@
     GTK_IM_MODULE = "fcitx5";
     QT_IM_MODULE = "fcitx5";
     XMODIFIERS = "@im=fcitx5";
+  };
+
+  # ──────────────────────────────────────────────
+  #  Noctalia Shell — 桌面环境
+  # ──────────────────────────────────────────────
+
+  programs.noctalia-shell = {
+    enable = true;
+    settings = {
+      bar = {
+        density = "compact";
+        position = "top";
+        widgets = {
+          left = [
+            { id = "Launcher"; }
+            { id = "Clock"; }
+          ];
+          center = [
+            { id = "Workspace"; labelMode = "none"; hideUnoccupied = false; }
+          ];
+          right = [
+            { id = "Tray"; }
+            { id = "Battery"; warningThreshold = 30; alwaysShowPercentage = false; }
+            { id = "Volume"; }
+            { id = "ControlCenter"; }
+          ];
+        };
+      };
+    };
   };
 
 

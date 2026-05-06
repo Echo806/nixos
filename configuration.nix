@@ -15,6 +15,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  # 使用 LTS 内核
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
+
+  # 禁用 systemd-based initrd，使用旧版 bash init
+  # systemd 260 在 ThinkPad X250 Broadwell 上 initrd 阶段崩溃
+  boot.initrd.systemd.enable = false;
+
   networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -24,6 +31,11 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
+
+  # Noctalia 面板功能所需的后台服务
+  hardware.bluetooth.enable = true;
+  services.power-profiles-daemon.enable = true;
+  services.upower.enable = true;
 
   # 启用 Flakes 特性以及配套的船新 nix 命令行工具
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -35,13 +47,107 @@
   # Select internationalisation properties.
   i18n.defaultLocale = "zh_CN.UTF-8";
 
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
+  # Enable the X11 windowing system (required for XWayland).
   services.xserver.enable = true;
 
-  # Enable the KDE Plasma Desktop Environment.
+  # Electron 应用 Wayland 原生支持（QQ/微信等）
+  # 设置后 Electron 应用通过 --ozone-platform-hint=auto 在 Wayland 上原生运行
+  environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  # SDDM display manager — 登录后选择 niri 会话
   services.displayManager.sddm.enable = true;
-  services.desktopManager.plasma6.enable = true;
+
+  # PAM: 登录时自动解锁 gnome-keyring（NetworkManager 存储 WiFi 密码）
+  security.pam.services.sddm.enableGnomeKeyring = true;
+
+  # 禁用 KDE Plasma, 改用 niri + Noctalia
+  # services.desktopManager.plasma6.enable = true;
+
+  # 注册 niri 会话到 display manager
+  services.displayManager.sessionPackages = [ pkgs.niri ];
+
+  # niri 系统级注册
+  programs.niri.enable = true;
+
+  # niri 配置文件 — 写入 /etc/niri/config.kdl（系统级 fallback 路径）
+  # 不依赖 home-manager 用户级激活，避免 dotfiles symlink 冲突
+  environment.etc."niri/config.kdl".text = ''
+    // 自启动
+    spawn-at-startup "noctalia-shell"
+    spawn-at-startup "fcitx5" "-d"
+    spawn-at-startup "polkit-gnome-authentication-agent-1"
+    spawn-at-startup "nm-applet"
+
+    // Wayland 输入法环境变量
+    environment {
+        GTK_IM_MODULE "fcitx5"
+        QT_IM_MODULE "fcitx5"
+        SDL_IM_MODULE "fcitx5"
+        GLFW_IM_MODULE "ibus"
+        XMODIFIERS "@im=fcitx5"
+        INPUT_METHOD "fcitx5"
+    }
+
+    binds {
+        // ── Noctalia IPC ──
+        Mod+Space { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+        Mod+Escape { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+        Mod+L { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+        XF86AudioLowerVolume { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
+        XF86AudioRaiseVolume { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
+        XF86AudioMute { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
+
+        // ── Launch ──
+        Mod+T { spawn "alacritty"; }
+        Mod+B { spawn "google-chrome-stable"; }
+
+        // ── Window ──
+        Mod+Q { close-window; }
+        Mod+Shift+E { quit; }
+
+        // ── Focus ──
+        Mod+Left { focus-column-left; }
+        Mod+Down { focus-window-down; }
+        Mod+Up { focus-window-up; }
+        Mod+Right { focus-column-right; }
+        Mod+Home { focus-column-first; }
+        Mod+End { focus-column-last; }
+
+        // ── Move ──
+        Mod+Ctrl+Left { move-column-left; }
+        Mod+Ctrl+Down { move-window-down; }
+        Mod+Ctrl+Up { move-window-up; }
+        Mod+Ctrl+Right { move-column-right; }
+
+        // ── Workspace ──
+        Mod+U { focus-workspace-up; }
+        Mod+D { focus-workspace-down; }
+        Mod+Ctrl+U { move-window-to-workspace-up; }
+        Mod+Ctrl+D { move-window-to-workspace-down; }
+
+        // ── Fullscreen ──
+        Mod+F { fullscreen-window; }
+
+        // ── Screenshot ──
+        Print { screenshot; }
+
+        // ── Layout ──
+        Mod+Period { consume-window-into-column; }
+        Mod+Comma { expel-window-from-column; }
+        Mod+Shift+Left { focus-monitor-left; }
+        Mod+Shift+Right { focus-monitor-right; }
+        Mod+Shift+Up { focus-monitor-up; }
+        Mod+Shift+Down { focus-monitor-down; }
+        Mod+Ctrl+Shift+Left { move-column-to-monitor-left; }
+        Mod+Ctrl+Shift+Right { move-column-to-monitor-right; }
+        Mod+Ctrl+Shift+Up { move-column-to-monitor-up; }
+        Mod+Ctrl+Shift+Down { move-column-to-monitor-down; }
+        Mod+Minus { set-column-width "-5%"; }
+        Mod+Plus { set-column-width "+5%"; }
+        Mod+Shift+Minus { set-window-height "-5%"; }
+        Mod+Shift+Plus { set-window-height "+5%"; }
+    }
+  '';
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -102,12 +208,59 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # WeChat Wayland 支持
+  # 问题：bwrap init 脚本中 ozone 参数被放在 "--" 分隔符之后，
+  # Electron 会将 "--" 之后的参数视为 JS argv 而忽略其 Chromium 标记语义。
+  # 解决：创建新 init 脚本，将 --ozone-platform-hint=auto 放在 "--" 之前。
+  nixpkgs.overlays = [
+    (final: prev: {
+      wechat = prev.symlinkJoin {
+        name = "${prev.wechat.name}-ozone";
+        paths = [ prev.wechat ];
+        postBuild = ''
+          # 解析实际的 bwrap 脚本路径（lndir 已解析过一层，只需一次 readlink）
+          bwrap_script=$(readlink "$out/bin/wechat")
+
+          # 从原 bwrap 脚本中提取旧 init 脚本路径
+          old_init=$(grep -oE '/nix/store/[a-z0-9]+-wechat-[0-9.]+-init' "$bwrap_script")
+          # 从旧 init 脚本中提取 AppImage 解包路径
+          old_src=$(grep -oE '/nix/store/[a-z0-9]+-wechat-[0-9.]+-extracted' "$old_init")
+
+          mkdir -p "$out/share"
+
+          # 创建新的 init 脚本：ozone 参数放在 -- 之前
+          new_init="$out/share/wechat-ozone-init"
+          cat > "$new_init" << 'INITEOF'
+#!/bin/sh
+source /etc/profile
+exec appimage-exec.sh -w SRCPLACEHOLDER --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true -- "$@"
+INITEOF
+          sed -i "s|SRCPLACEHOLDER|$old_src|" "$new_init"
+          chmod +x "$new_init"
+
+          # 创建新的 bwrap 脚本，引用新 init
+          new_bwrap="$out/share/wechat-ozone-bwrap"
+          cp "$bwrap_script" "$new_bwrap"
+          sed -i "s|$old_init|$new_init|" "$new_bwrap"
+          chmod +x "$new_bwrap"
+
+          # 替换 bin/wechat 符号链接
+          rm "$out/bin/wechat"
+          ln -s "$new_bwrap" "$out/bin/wechat"
+        '';
+      };
+    })
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
+    polkit_gnome  # polkit 认证代理
+    networkmanagerapplet  # WiFi 密码管理（niri 必需——否则 NM 找不到 secret agent）
+    gnome-keyring  # 存储 WiFi 密码
   ];
 
 
@@ -115,11 +268,13 @@
     extra-substituters = [
       "https://cache.garnix.io"
       "https://attic.xuyh0120.win/lantian"
+      "https://noctalia.cachix.org"
     ];
 
     extra-trusted-public-keys = [
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
       "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
+      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
     ];
   };
 
