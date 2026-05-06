@@ -93,6 +93,12 @@
 
   # Install firefox.
   programs.firefox.enable = true;
+  # Enable Steam with 32-bit OpenGL support
+  programs.steam.enable = true;
+  programs.steam.fontPackages = with pkgs; [
+    noto-fonts-cjk-sans
+    wqy_microhei
+  ];
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 

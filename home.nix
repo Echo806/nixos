@@ -20,6 +20,12 @@
   #     xxx
   # '';
 
+  # Steam 只读取用户级 fontconfig，必须在此配置 CJK 字体
+  fonts.fontconfig.enable = true;
+  fonts.fontconfig.defaultFonts = {
+    sansSerif = [ "Noto Sans CJK SC" "WenQuanYi Micro Hei" "Noto Sans" ];
+  };
+
   # 设置鼠标指针大小以及字体 DPI（适用于 4K 显示器）
   xresources.properties = {
     "Xcursor.size" = 16;
@@ -43,7 +49,9 @@
       clash-verge-rev
       marktext
       google-chrome
-
+      # Steam 只读取用户级 fontconfig，字体必须放入 home.packages
+      noto-fonts-cjk-sans
+      wqy_microhei
     ])
     ++ [
       inputs.llm-agents.packages.${pkgs.system}.cc-switch-cli
