@@ -78,6 +78,7 @@
     spawn-at-startup "fcitx5" "-d"
     spawn-at-startup "polkit-gnome-authentication-agent-1"
     spawn-at-startup "nm-applet"
+    spawn-at-startup "clash-verge"
 
     // Wayland 输入法环境变量
     environment {
