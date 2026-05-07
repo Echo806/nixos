@@ -108,7 +108,7 @@
         XF86AudioMute { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
 
         // ── Launch ──
-        Mod+T { spawn "alacritty"; }
+        Mod+T { spawn "ghostty"; }
         Mod+B { spawn "google-chrome-stable"; }
 
         // ── Window ──

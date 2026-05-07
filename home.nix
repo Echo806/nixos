@@ -49,12 +49,13 @@
       clash-verge-rev
       # marktext  # 在 unstable 上构建失败 (node-gyp)，暂时禁用
       google-chrome
-      alacritty
       # Steam 只读取用户级 fontconfig，字体必须放入 home.packages
       noto-fonts-cjk-sans
       wqy_microhei
-
-            
+  
+      neovim 
+      fastfetch
+      ghostty         
     ])
     ++ [
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.cc-switch-cli
