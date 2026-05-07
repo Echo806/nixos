@@ -73,6 +73,7 @@
   # 不依赖 home-manager 用户级激活，避免 dotfiles symlink 冲突
   environment.etc."niri/config.kdl".text = ''
     // 自启动
+    spawn-at-startup "xwayland-satellite"
     spawn-at-startup "noctalia-shell"
     spawn-at-startup "fcitx5" "-d"
     spawn-at-startup "polkit-gnome-authentication-agent-1"
@@ -233,7 +234,7 @@
           cat > "$new_init" << 'INITEOF'
 #!/bin/sh
 source /etc/profile
-exec appimage-exec.sh -w SRCPLACEHOLDER --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true -- "$@"
+exec appimage-exec.sh -w SRCPLACEHOLDER -- --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true -- "$@"
 INITEOF
           sed -i "s|SRCPLACEHOLDER|$old_src|" "$new_init"
           chmod +x "$new_init"
@@ -261,6 +262,7 @@ INITEOF
     polkit_gnome  # polkit 认证代理
     networkmanagerapplet  # WiFi 密码管理（niri 必需——否则 NM 找不到 secret agent）
     gnome-keyring  # 存储 WiFi 密码
+    xwayland-satellite  # niri XWayland 支持（微信等 Qt/X11 应用需要）
   ];
 
 
