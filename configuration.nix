@@ -72,6 +72,14 @@
   # niri 配置文件 — 写入 /etc/niri/config.kdl（系统级 fallback 路径）
   # 不依赖 home-manager 用户级激活，避免 dotfiles symlink 冲突
   environment.etc."niri/config.kdl".text = ''
+    // 输入设备
+    input {
+        touchpad {
+            tap
+            natural-scroll
+        }
+    }
+
     // 自启动
     spawn-at-startup "xwayland-satellite"
     spawn-at-startup "noctalia-shell"
@@ -178,6 +186,9 @@
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
+
+  # 触控板自然滚动：手指上滑→内容上移，下滑→内容下移（macOS 风格）
+  services.libinput.touchpad.naturalScrolling = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.run = {
