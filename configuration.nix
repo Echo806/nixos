@@ -209,50 +209,6 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  # WeChat Wayland 支持
-  # 问题：bwrap init 脚本中 ozone 参数被放在 "--" 分隔符之后，
-  # Electron 会将 "--" 之后的参数视为 JS argv 而忽略其 Chromium 标记语义。
-  # 解决：创建新 init 脚本，将 --ozone-platform-hint=auto 放在 "--" 之前。
-  nixpkgs.overlays = [
-    (final: prev: {
-      wechat = prev.symlinkJoin {
-        name = "${prev.wechat.name}-ozone";
-        paths = [ prev.wechat ];
-        postBuild = ''
-          # 解析实际的 bwrap 脚本路径（lndir 已解析过一层，只需一次 readlink）
-          bwrap_script=$(readlink "$out/bin/wechat")
-
-          # 从原 bwrap 脚本中提取旧 init 脚本路径
-          old_init=$(grep -oE '/nix/store/[a-z0-9]+-wechat-[0-9.]+-init' "$bwrap_script")
-          # 从旧 init 脚本中提取 AppImage 解包路径
-          old_src=$(grep -oE '/nix/store/[a-z0-9]+-wechat-[0-9.]+-extracted' "$old_init")
-
-          mkdir -p "$out/share"
-
-          # 创建新的 init 脚本：ozone 参数放在 -- 之前
-          new_init="$out/share/wechat-ozone-init"
-          cat > "$new_init" << 'INITEOF'
-#!/bin/sh
-source /etc/profile
-exec appimage-exec.sh -w SRCPLACEHOLDER -- --ozone-platform-hint=auto --enable-features=WaylandWindowDecorations --enable-wayland-ime=true -- "$@"
-INITEOF
-          sed -i "s|SRCPLACEHOLDER|$old_src|" "$new_init"
-          chmod +x "$new_init"
-
-          # 创建新的 bwrap 脚本，引用新 init
-          new_bwrap="$out/share/wechat-ozone-bwrap"
-          cp "$bwrap_script" "$new_bwrap"
-          sed -i "s|$old_init|$new_init|" "$new_bwrap"
-          chmod +x "$new_bwrap"
-
-          # 替换 bin/wechat 符号链接
-          rm "$out/bin/wechat"
-          ln -s "$new_bwrap" "$out/bin/wechat"
-        '';
-      };
-    })
-  ];
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
