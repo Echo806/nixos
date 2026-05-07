@@ -53,6 +53,8 @@
       # Steam 只读取用户级 fontconfig，字体必须放入 home.packages
       noto-fonts-cjk-sans
       wqy_microhei
+
+            
     ])
     ++ [
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.cc-switch-cli
