@@ -40,8 +40,7 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./configuration.nix
-          ./noctalia.nix
+          ./hosts/x250/default.nix
           nixos-hardware.nixosModules.lenovo-thinkpad-x250
           # 将 home-manager 配置为 nixos 的一个 module
           # 这样在 nixos-rebuild switch 时，home-manager 配置也会被自动部署
@@ -54,7 +53,7 @@
             home-manager.users.run = {
               imports = [
                 inputs.noctalia.homeModules.default
-                ./home.nix
+                ./home/hosts/x250.nix
               ];
             };
 
