@@ -22,6 +22,19 @@
 
   home.username = "run";
   home.homeDirectory = "/home/run";
+  # ── x250 专属: 代理 (clash-verge) ──
+  home.sessionVariables = {
+    http_proxy = "http://127.0.0.1:7897";
+    https_proxy = "http://127.0.0.1:7897";
+    all_proxy = "socks5:127.0.0.1:7897";
+  };
+
+  # ── x250 专属: HiDPI (4K 屏) ──
+  xresources.properties = {
+    "Xcursor.size" = 16;
+    "Xft.dpi" = 172;
+  };
+
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
 }

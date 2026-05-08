@@ -1,8 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
     ./hardware.nix
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x250
     ../../system/base/users.nix
     ../../system/base/locale.nix
     ../../system/base/nix-settings.nix

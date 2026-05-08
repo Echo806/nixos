@@ -6,20 +6,17 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     llm-agents.url = "github:numtide/llm-agents.nix";
 
-    # Noctalia shell / desktop environment
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # home-manager (master, 对齐 nixpkgs-unstable)
     home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  # Binary caches
   nixConfig = {
     extra-substituters = [
       "https://cache.garnix.io"
@@ -33,35 +30,40 @@
     ];
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, nixos-hardware, noctalia, ... }: {
+  outputs = inputs@{ self, nixpkgs, home-manager, nixos-hardware, noctalia, ... }:
+  let
+    mkHomeManager = homeHostPath: {
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.users.run.imports = [
+        noctalia.homeModules.default
+        homeHostPath
+      ];
+      home-manager.extraSpecialArgs = { inherit inputs; };
+    };
+  in {
     nixosConfigurations = {
-      # 这里的 my-nixos 替换成你的主机名称
-      nixos = nixpkgs.lib.nixosSystem {
+      # ThinkPad X250 — 当前主力机
+      x250 = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./hosts/x250/default.nix
-          nixos-hardware.nixosModules.lenovo-thinkpad-x250
-          # 将 home-manager 配置为 nixos 的一个 module
-          # 这样在 nixos-rebuild switch 时，home-manager 配置也会被自动部署
+          ./hosts/x250
           home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-
-            # 使用 imports 方式加载 home.nix, 以便在其中引入 noctalia homeModules
-            home-manager.users.run = {
-              imports = [
-                inputs.noctalia.homeModules.default
-                ./home/hosts/x250.nix
-              ];
-            };
-
-            # 使用 home-manager.extraSpecialArgs 自定义传递给 ./home.nix 的参数
-            home-manager.extraSpecialArgs = { inherit inputs; };
-          }
+          (mkHomeManager ./home/hosts/x250.nix)
         ];
       };
+
+      # Lenovo Legion R9000P — 待添加
+      # r9000p = nixpkgs.lib.nixosSystem {
+      #   system = "x86_64-linux";
+      #   specialArgs = { inherit inputs; };
+      #   modules = [
+      #     ./hosts/r9000p
+      #     home-manager.nixosModules.home-manager
+      #     (mkHomeManager ./home/hosts/r9000p.nix)
+      #   ];
+      # };
     };
   };
 }
