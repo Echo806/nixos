@@ -6,6 +6,7 @@
     corefonts  # Webdings + Arial/Times/etc
     winePackages.fonts  # Symbol + Wingdings replacements
     vista-fonts
+    nerd-fonts.jetbrains-mono
   ];
 
   fonts.fontconfig.defaultFonts.sansSerif = [ "Noto Sans CJK SC" "Noto Sans" ];
