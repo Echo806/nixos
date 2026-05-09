@@ -52,6 +52,7 @@
         // ── Launch ──
         Mod+T { spawn "ghostty"; }
         Mod+B { spawn "google-chrome-stable"; }
+        Mod+O { spawn "fuzzel"; }
 
         // ── Window ──
         Mod+Q { close-window; }
