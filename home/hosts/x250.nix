@@ -18,7 +18,7 @@
     ../apps/neovim.nix
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
-    ../apps/wpsoffice.nix
+
   ];
 
   home.username = "run";
