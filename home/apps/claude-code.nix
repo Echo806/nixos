@@ -8,4 +8,6 @@
     ++ [
       inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.cc-switch-cli
     ];
+
+  home.file."CLAUDE.md".source = ../../CLAUDE.md;
 }
