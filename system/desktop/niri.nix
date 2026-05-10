@@ -52,7 +52,7 @@
         // ── Launch ──
         Mod+T { spawn "ghostty"; }
         Mod+B { spawn "google-chrome-stable"; }
-        Mod+O { spawn "fuzzel"; }
+        Mod+O { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
 
         // ── Window ──
         Mod+Q { close-window; }
