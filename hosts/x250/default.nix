@@ -4,6 +4,7 @@
   imports = [
     ./hardware.nix
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x250
+    ../../system/base/sudo-askpass.nix
     ../../system/base/users.nix
     ../../system/base/locale.nix
     ../../system/base/nix-settings.nix
