@@ -48,12 +48,12 @@
         XF86AudioLowerVolume { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
         XF86AudioRaiseVolume { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
         XF86AudioMute { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
+        XF86MonBrightnessDown { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
+        XF86MonBrightnessUp { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
 
         // ── Launch ──
         Mod+T { spawn "ghostty"; }
         Mod+B { spawn "google-chrome-stable"; }
-        Mod+O { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-
         // ── Window ──
         Mod+Q { close-window; }
         Mod+Shift+E { quit; }

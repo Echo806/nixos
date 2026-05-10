@@ -10,4 +10,5 @@
     ];
 
   home.file."CLAUDE.md".source = ../../CLAUDE.md;
+  home.file."keybindings.md".source = ../../keybindings.md;
 }
