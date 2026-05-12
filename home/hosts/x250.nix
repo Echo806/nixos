@@ -18,7 +18,7 @@
     ../apps/neovim.nix
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
-
+    ../apps/onlyoffice-desktopeditors.nix
   ];
 
   home.username = "run";
