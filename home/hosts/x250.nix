@@ -19,6 +19,7 @@
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
     ../apps/onlyoffice-desktopeditors.nix
+    ../apps/wpsoffice.nix
   ];
 
   home.username = "run";

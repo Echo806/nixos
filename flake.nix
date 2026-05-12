@@ -48,6 +48,13 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
+          ({ ... }: {
+            nixpkgs.overlays = [
+              (final: prev: {
+                wps-symbol-fonts = prev.callPackage ./packages/wps-symbol-fonts { };
+              })
+            ];
+          })
           ./hosts/x250
           home-manager.nixosModules.home-manager
           (mkHomeManager ./home/hosts/x250.nix)
