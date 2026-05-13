@@ -6,7 +6,7 @@
     settings = {
       bar = {
         density = "compact";
-        position = "top";
+        position = "left";
         widgets = {
           left = [
             { id = "Launcher"; }
