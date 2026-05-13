@@ -5,7 +5,7 @@
     enable = true;
     settings = {
       bar = {
-        density = "compact";
+        density = "comfortable";
         position = "left";
         widgets = {
           left = [
@@ -29,7 +29,16 @@
             }
           ];
         };
-      }; 
+      };
+      general=
+      {
+        avatarImage = "/home/run/.face/cirno.jpg";
+      };
+      location=
+      {
+        monthBeforeDay=true;
+        name="Guangzhou,China";
+      };
     };
     
     plugins = {
