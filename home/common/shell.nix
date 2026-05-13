@@ -10,7 +10,11 @@
         widgets = {
           left = [
             { id = "Launcher"; }
-            { id = "Clock"; }
+            { 
+              formatVertical="ddd  - MMM dd - HH mm";
+              id = "Clock";
+
+            }
           ];
           center = [
             { id = "Workspace"; labelMode = "none"; hideUnoccupied = false; }
@@ -19,7 +23,10 @@
             { id = "Tray"; }
             { id = "Battery"; warningThreshold = 30; alwaysShowPercentage = false; }
             { id = "Volume"; }
-            { id = "ControlCenter"; }
+            { 
+              id = "ControlCenter";
+              useDistroLogo=true;
+            }
           ];
         };
       }; 
