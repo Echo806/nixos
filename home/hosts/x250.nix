@@ -15,7 +15,7 @@
     ../apps/vscode.nix
     ../apps/codex.nix
     ../apps/ghostty.nix
-    ../apps/neovim.nix
+    ../apps/neovim/default.nix
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
     ../apps/onlyoffice-desktopeditors.nix
