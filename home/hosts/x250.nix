@@ -20,6 +20,10 @@
     ../apps/claude-code.nix
     ../apps/onlyoffice-desktopeditors.nix
     ../apps/wpsoffice.nix
+    ../apps/tailscale.nix
+    ../apps/sunshine.nix
+    ../apps/moonlight.nix
+    ../apps/typora.nix
   ];
 
   home.username = "run";

@@ -71,6 +71,22 @@
       #     (mkHomeManager ./home/hosts/r9000p.nix)
       #   ];
       # };
+      runrun = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
+        modules = [
+          ({ ... }: {
+            nixpkgs.overlays = [
+              (final: prev: {
+                wps-symbol-fonts = prev.callPackage ./packages/wps-symbol-fonts { };
+              })
+            ];
+          })
+          ./hosts/runrun
+          home-manager.nixosModules.home-manager
+          (mkHomeManager ./home/hosts/runrun.nix)
+        ];
+      };
     };
   };
 }

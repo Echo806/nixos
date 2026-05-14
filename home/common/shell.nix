@@ -33,11 +33,18 @@
       general=
       {
         avatarImage = "/home/run/.face/cirno.jpg";
+        language = "en";
       };
       location=
       {
         monthBeforeDay=true;
         name="Guangzhou,China";
+      };
+
+      desktopWidgets=
+      {
+        enabled = true;
+        monitorWidgets=["Clock" "Weather" "MediaPlayer"];
       };
     };
     
@@ -66,5 +73,6 @@
       };
       # this may also be a string or a path to a JSON file.
     };
+
   };
 }

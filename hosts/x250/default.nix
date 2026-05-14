@@ -34,13 +34,21 @@
   networking.networkmanager.enable = true;
 
   # System-level programs
-  programs.firefox.enable = true;
   programs.steam.enable = true;
   programs.steam.fontPackages = with pkgs; [
     noto-fonts-cjk-sans
     wqy_microhei
   ];
   programs.clash-verge.enable = true;
+
+  services.tailscale.enable = true;
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = true;
+    openFirewall = true;
+  };
+  
 
   environment.systemPackages = with pkgs; [
     wget
