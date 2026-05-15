@@ -32,7 +32,7 @@
       };
       general=
       {
-        avatarImage = "/home/run/.face/cirno.jpg";
+        avatarImage = "/home/run/nixos/assets/avator/妖夢.jpg";
         language = "en";
       };
       location=

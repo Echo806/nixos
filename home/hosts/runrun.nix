@@ -24,6 +24,8 @@
     ../apps/sunshine.nix
     ../apps/moonlight.nix
     ../apps/typora.nix
+    ../apps/yazi.nix
+    ../apps/opencode.nix
   ];
 
   home.username = "run";
