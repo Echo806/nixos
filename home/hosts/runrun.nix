@@ -26,6 +26,7 @@
     ../apps/typora.nix
     ../apps/yazi.nix
     ../apps/opencode.nix
+    ../apps/localsend.nix
   ];
 
   home.username = "run";
