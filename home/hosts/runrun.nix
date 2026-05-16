@@ -30,6 +30,10 @@
 
   home.username = "run";
   home.homeDirectory = "/home/run";
+  # ── 默认编辑器设为 neovim ──
+  programs.neovim.defaultEditor = true;
+  programs.bash.enable = true;
+
   # ── x250 专属: 代理 (clash-verge) ──
   home.sessionVariables = {
     http_proxy = "http://127.0.0.1:7897";

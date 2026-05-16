@@ -1,5 +1,7 @@
 { config, pkgs, inputs, ... }:
-
+let
+  fonts = import ../../assets/fonts { inherit pkgs; };
+in
 {
   imports = [
     ./hardware.nix
@@ -34,10 +36,7 @@
 
   # System-level programs
   programs.steam.enable = true;
-  programs.steam.fontPackages = with pkgs; [
-    noto-fonts-cjk-sans
-    wqy_microhei
-  ];
+  programs.steam.fontPackages = fonts.steam;
   programs.clash-verge.enable = true;
 
   services.tailscale.enable = true;
