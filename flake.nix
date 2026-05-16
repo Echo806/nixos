@@ -6,6 +6,8 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    hermes-agent.url = "github:NousResearch/hermes-agent";
+
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
