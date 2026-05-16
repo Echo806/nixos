@@ -3,6 +3,8 @@
 {
   services.xserver.enable = true;
 
+  environment.systemPackages = [ pkgs.warpd ];
+
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   services.displayManager.sddm.enable = true;
@@ -50,6 +52,11 @@
         XF86AudioMute { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
         XF86MonBrightnessDown { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
         XF86MonBrightnessUp { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
+
+        // ── warpd 虚拟指针 ──
+        Mod+Alt+X { spawn "warpd" "--hint"; }
+        Mod+Alt+G { spawn "warpd" "--grid"; }
+        Mod+Alt+C { spawn "warpd" "--normal"; }
 
         // ── Launch ──
         Mod+T { spawn "ghostty"; }
