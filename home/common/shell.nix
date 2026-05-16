@@ -51,6 +51,12 @@
           }
         ];
       };
+
+      wallpaper = {
+        enabled = true;
+        directory = "/home/run/nixos/assets/wallpapers";
+        viewMode = "recursive";
+      };
     };
 
     plugins = {
