@@ -27,7 +27,6 @@
     ../apps/yazi.nix
     ../apps/opencode.nix
     ../apps/localsend.nix
-    ../apps/hugo.nix
   ];
 
   home.username = "run";

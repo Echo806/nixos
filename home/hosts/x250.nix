@@ -27,8 +27,7 @@
     ../apps/yazi.nix
     ../apps/opencode.nix
     ../apps/localsend.nix
-    ../apps/hugo.nix
-  ];
+  ]a;
 
   home.username = "run";
   home.homeDirectory = "/home/run";
