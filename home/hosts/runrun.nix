@@ -25,7 +25,6 @@
     ../apps/moonlight.nix
     ../apps/typora.nix
     ../apps/yazi.nix
-    ../apps/opencode.nix
     ../apps/localsend.nix
   ];
 
