@@ -51,7 +51,6 @@
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
-}
 
 /* Host-specific Noctalia widget coordinates for x250 (framework) */
 /* Put precise coordinates here; left as zeros for later tuning. */
@@ -70,3 +69,5 @@
       ];
     };
   };
+}
+
