@@ -52,3 +52,21 @@
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
 }
+
+/* Host-specific Noctalia widget coordinates for x250 (framework) */
+/* Put precise coordinates here; left as zeros for later tuning. */
+  programs.noctalia-shell.settings = {
+    desktopWidgets = {
+      enabled = true;
+      monitorWidgets = [
+        {
+          name = "eDP-1";
+          widgets = [
+            { id = "Clock";       x = 73; y = 17; scale = 1.0; }
+            { id = "Weather";     x = 1250; y = 25; scale = 1.0; }
+            { id = "MediaPlayer"; x = 578; y = 22; scale = 1.0; }
+          ];
+        }
+      ];
+    };
+  };

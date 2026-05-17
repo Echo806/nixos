@@ -50,4 +50,22 @@
 
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
+
+  # Host-specific Noctalia desktop widget coordinates for runrun
+  programs.noctalia-shell.settings = {
+    desktopWidgets = {
+      enabled = true;
+      monitorWidgets = [
+        {
+          name = "VGA-1";
+          widgets = [
+            { id = "Clock";       x = 45; y = 17; scale = 1.0; }
+            { id = "Weather";     x = 800; y = 25; scale = 0.8; }
+            { id = "MediaPlayer"; x = 330; y = 22; scale = 1.0; }
+          ];
+        }
+      ];
+    };
+  };
+
 }

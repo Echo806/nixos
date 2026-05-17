@@ -38,26 +38,14 @@
         name = "Guangzhou,China";
       };
 
-      desktopWidgets = {
-        enabled = true;
-        monitorWidgets = [
-          {
-            name = "eDP-1";
-            widgets = [
-              { id = "Clock"; x = 73; y = 17; scale = 1.0; }
-              { id = "Weather"; x = 1250; y = 25; scale = 1.0; }
-              { id = "MediaPlayer"; x = 578; y = 22; scale = 1.0; }
-            ];
-          }
-        ];
-      };
+      desktopWidgets = {};
 
       wallpaper = {
         enabled = true;
         directory = "/home/run/nixos/assets/wallpapers";
         viewMode = "recursive";
       };
-    };
+    }; 
 
     plugins = {
       sources = [
