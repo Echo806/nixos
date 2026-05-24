@@ -27,6 +27,7 @@
     ../apps/yazi.nix
     ../apps/opencode.nix
     ../apps/localsend.nix
+    ../apps/nautilus.nix
   ];
 
   home.username = "run";
