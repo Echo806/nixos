@@ -18,6 +18,7 @@ in
     ../../system/hardware/power.nix
     ../../system/services/printing.nix
     ../../system/services/hermes-agent.nix
+    ../../system/services/office-tools.nix
   ];
 
   # Bootloader

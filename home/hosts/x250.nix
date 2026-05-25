@@ -28,6 +28,7 @@
     ../apps/opencode.nix
     ../apps/localsend.nix
     ../apps/nautilus.nix
+    ../apps/sshfs.nix
   ];
 
   home.username = "run";
