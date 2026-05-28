@@ -16,6 +16,13 @@ let
     hash = "sha256-FMjC1w6631Y4Aiz4O4UW2zK4EDUvOub/dsnxoKto1pw=";
   };
 
+  superpowers = pkgs.fetchFromGitHub {
+    owner = "obra";
+    repo = "superpowers";
+    rev = "f2cbfbefebbfef77321e4c9abc9e949826bea9d7";
+    hash = "sha256-3E3rO6hR87JUfS3XV1Eaoz6SDWOftleWvN9UPNFEMjw=";
+  };
+
   anthropicOfficialSkills = pkgs.fetchFromGitHub {
     owner = "anthropics";
     repo = "skills";
@@ -100,6 +107,8 @@ in
 
   systemd.tmpfiles.rules = [
     "C+ /var/lib/hermes/.hermes/skills/agency-agents - hermes hermes - ${agencyAgentsHermesSkills}/agency-agents"
+
+    "C+ /var/lib/hermes/.hermes/skills/superpowers - hermes hermes - ${superpowers}/skills"
 
     "C+ /var/lib/hermes/.hermes/skills/official-office - hermes hermes - ${officeDocumentSkills}/official-office"
 
