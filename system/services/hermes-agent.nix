@@ -16,6 +16,30 @@ let
     hash = "sha256-FMjC1w6631Y4Aiz4O4UW2zK4EDUvOub/dsnxoKto1pw=";
   };
 
+  anthropicOfficialSkills = pkgs.fetchFromGitHub {
+    owner = "anthropics";
+    repo = "skills";
+    rev = "690f15cac7f7b4c055c5ab109c79ed9259934081";
+    hash = "sha256-GMXFJSePrpEvhzMQ82YI9Z10BDkuFK/lXUDELclvQ4c=";
+  };
+
+  openaiOfficialSkills = pkgs.fetchFromGitHub {
+    owner = "openai";
+    repo = "skills";
+    rev = "b0401f07213a66414d84a65cb50c1d226f99485a";
+    hash = "sha256-MpXYiPBzQTBCXN7Hw36qBG82cKqW9havnbCw7JHeSJI=";
+  };
+
+  officeDocumentSkills = pkgs.runCommand "hermes-office-document-skills" { } ''
+    set -euo pipefail
+    mkdir -p "$out/official-office"
+
+    cp -R ${anthropicOfficialSkills}/skills/docx "$out/official-office/docx"
+    cp -R ${anthropicOfficialSkills}/skills/xlsx "$out/official-office/xlsx"
+    cp -R ${anthropicOfficialSkills}/skills/pptx "$out/official-office/pptx"
+    cp -R ${openaiOfficialSkills}/skills/.curated/pdf "$out/official-office/pdf"
+  '';
+
   agencyAgentsHermesSkills = pkgs.runCommand "agency-agents-hermes-skills" { } ''
     set -euo pipefail
     mkdir -p "$out/agency-agents"
@@ -75,10 +99,10 @@ in
   ];
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/hermes/.hermes/skills/agency-agents 0755 hermes hermes - -"
     "C+ /var/lib/hermes/.hermes/skills/agency-agents - hermes hermes - ${agencyAgentsHermesSkills}/agency-agents"
 
-    "d /var/lib/hermes/.hermes/skills/custom 0755 hermes hermes - -"
+    "C+ /var/lib/hermes/.hermes/skills/official-office - hermes hermes - ${officeDocumentSkills}/official-office"
+
     "C+ /var/lib/hermes/.hermes/skills/custom - hermes hermes - ${hermesDeclarativeState}/skills/custom"
 
     "d /var/lib/hermes/.hermes/memories 0755 hermes hermes - -"
