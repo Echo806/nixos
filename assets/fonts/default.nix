@@ -7,12 +7,13 @@
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
-    corefonts
-    vista-fonts
-    vista-fonts-chs
-    local-windows-fonts
-    ms-win10-fonts
-    ms-win10-sc-sup-fonts
+    windows-fonts
+
+    # Developer monospace font for terminals/editors. This custom package starts
+    # from Maple Mono NL NF CN and bakes in the user's selected alternates from
+    # https://font.subf.dev/zh-cn/playground/ so apps do not need runtime
+    # font-feature support.
+    maple-mono-custom
   ];
 
   steam = with pkgs; [
@@ -22,6 +23,6 @@
   systemFontconfig = {
     sansSerif = [ "Microsoft YaHei" "Noto Sans CJK SC" "Noto Sans" ];
     serif = [ "SimSun" "Noto Serif CJK SC" "Noto Serif" ];
-    monospace = [ "Microsoft YaHei Mono" "Noto Sans Mono CJK SC" "Noto Sans Mono" ];
+    monospace = [ "Maple Mono Custom" "Maple Mono NL NF CN" "Microsoft YaHei Mono" "Noto Sans Mono CJK SC" "Noto Sans Mono" ];
   };
 }

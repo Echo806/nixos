@@ -35,10 +35,6 @@ in
           <test name="family" compare="eq"><string>黑体</string></test>
           <edit name="family" mode="assign_replace" binding="strong"><string>微软雅黑</string></edit>
         </match>
-        <match target="pattern">
-          <test name="family" compare="eq"><string>SimHei</string></test>
-          <edit name="family" mode="assign_replace" binding="strong"><string>Microsoft YaHei</string></edit>
-        </match>
       </fontconfig>
     '';
   };

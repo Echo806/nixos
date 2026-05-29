@@ -53,12 +53,8 @@
           ({ ... }: {
             nixpkgs.overlays = [
               (final: prev: {
-                wps-symbol-fonts = prev.callPackage ./packages/wps-symbol-fonts { };
-                wps-cjk-font-aliases = prev.callPackage ./packages/wps-cjk-font-aliases { };
-                win-fonts-for-mac = prev.callPackage ./packages/win-fonts-for-mac { };
-                ms-win10-fonts = prev.callPackage ./packages/ms-win10-fonts { };
-                ms-win10-sc-sup-fonts = prev.callPackage ./packages/ms-win10-sc-sup-fonts { };
-                local-windows-fonts = prev.callPackage ./packages/local-windows-fonts { };
+                maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
+                windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
               })
             ];
           })
@@ -85,12 +81,8 @@
           ({ ... }: {
             nixpkgs.overlays = [
               (final: prev: {
-                wps-symbol-fonts = prev.callPackage ./packages/wps-symbol-fonts { };
-                wps-cjk-font-aliases = prev.callPackage ./packages/wps-cjk-font-aliases { };
-                win-fonts-for-mac = prev.callPackage ./packages/win-fonts-for-mac { };
-                ms-win10-fonts = prev.callPackage ./packages/ms-win10-fonts { };
-                ms-win10-sc-sup-fonts = prev.callPackage ./packages/ms-win10-sc-sup-fonts { };
-                local-windows-fonts = prev.callPackage ./packages/local-windows-fonts { };
+                maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
+                windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
               })
             ];
           })

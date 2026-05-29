@@ -118,10 +118,18 @@ in
     "C+ /var/lib/hermes/.hermes/memories - hermes hermes - ${hermesMemorySeed}/memories"
 
     "C+ /var/lib/hermes/.hermes/SOUL.md 0644 hermes hermes - ${hermesDeclarativeState}/SOUL.md"
+
+    # Remove stale manually-created gateway locks.  The gateway recreates the
+    # file as the hermes user; keeping this declarative avoids a root-owned lock
+    # crash-loop after rebuilds.
+    "r /var/lib/hermes/.hermes/gateway.lock - - - - -"
   ];
 
   services.hermes-agent = {
-    enable = true;
+    # The user no longer wants QQ/social-media integration, so do not run the
+    # always-on messaging gateway service.  Keep CLI/config/skills below managed
+    # explicitly for normal local Hermes use.
+    enable = false;
 
     settings = {
       model = {
@@ -155,7 +163,13 @@ in
 
     # 密钥走环境文件（/var/lib/hermes/env），不在 Git 中跟踪
     environmentFiles = [ "/var/lib/hermes/env" ];
+  };
 
-    addToSystemPackages = true;
+  environment.systemPackages = [
+    inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
+
+  environment.variables = {
+    HERMES_HOME = "/var/lib/hermes/.hermes";
   };
 }
