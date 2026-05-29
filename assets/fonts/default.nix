@@ -15,23 +15,11 @@
     ms-win10-sc-sup-fonts
   ];
 
-  home = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-cjk-serif
-  ];
-
   steam = with pkgs; [
     noto-fonts-cjk-sans
   ];
 
   systemFontconfig = {
-    sansSerif = [ "Microsoft YaHei" "Noto Sans CJK SC" "Noto Sans" ];
-    serif = [ "SimSun" "Noto Serif CJK SC" "Noto Serif" ];
-    monospace = [ "Microsoft YaHei Mono" "Noto Sans Mono CJK SC" "Noto Sans Mono" ];
-  };
-
-  homeFontconfig = {
     sansSerif = [ "Microsoft YaHei" "Noto Sans CJK SC" "Noto Sans" ];
     serif = [ "SimSun" "Noto Serif CJK SC" "Noto Serif" ];
     monospace = [ "Microsoft YaHei Mono" "Noto Sans Mono CJK SC" "Noto Sans Mono" ];

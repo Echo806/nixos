@@ -4,7 +4,6 @@
   imports = [
     ../common/shell.nix
     ../common/git.nix
-    ../common/theme.nix
     ../common/fcitx5.nix
     ../apps/chrome.nix
     ../apps/qq.nix
