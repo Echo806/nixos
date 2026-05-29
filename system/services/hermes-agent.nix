@@ -23,25 +23,28 @@ let
     hash = "sha256-3E3rO6hR87JUfS3XV1Eaoz6SDWOftleWvN9UPNFEMjw=";
   };
 
-  anthropicOfficeSkills = pkgs.runCommand "anthropic-office-skills" { } ''
+  anthropicOfficialSkills = pkgs.fetchFromGitHub {
+    owner = "anthropics";
+    repo = "skills";
+    rev = "690f15cac7f7b4c055c5ab109c79ed9259934081";
+    hash = "sha256-GMXFJSePrpEvhzMQ82YI9Z10BDkuFK/lXUDELclvQ4c=";
+  };
+
+  openaiOfficialSkills = pkgs.fetchFromGitHub {
+    owner = "openai";
+    repo = "skills";
+    rev = "b0401f07213a66414d84a65cb50c1d226f99485a";
+    hash = "sha256-MpXYiPBzQTBCXN7Hw36qBG82cKqW9havnbCw7JHeSJI=";
+  };
+
+  officeDocumentSkills = pkgs.runCommand "hermes-office-document-skills" { } ''
     set -euo pipefail
-    mkdir -p "$out/productivity"/{docx,xlsx,pptx,pdf}
-    cp ${pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/anthropics/skills/main/skills/docx/SKILL.md";
-      hash = "sha256-z7q9crGux9+q2Yj7bl4Wsn3HRLmgDK4V25BF6V9TkD4=";
-    }} "$out/productivity/docx/SKILL.md"
-    cp ${pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/anthropics/skills/main/skills/xlsx/SKILL.md";
-      hash = "sha256-3TFtt3haa+EpZsKi2EiTH79fUYs82wpm+mLug16tHPw=";
-    }} "$out/productivity/xlsx/SKILL.md"
-    cp ${pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/anthropics/skills/main/skills/pptx/SKILL.md";
-      hash = "sha256-5bDfkYy+nWJQizz4CNc4mWM/gvwZ9iWKJe+fDefmISU=";
-    }} "$out/productivity/pptx/SKILL.md"
-    cp ${pkgs.fetchurl {
-      url = "https://raw.githubusercontent.com/anthropics/skills/main/skills/pdf/SKILL.md";
-      hash = "sha256-n3i4NZ+9SUOtJgp6HkNuWpZQNAbWw06Z9pIj1kfYW5w=";
-    }} "$out/productivity/pdf/SKILL.md"
+    mkdir -p "$out/official-office"
+
+    cp -R ${anthropicOfficialSkills}/skills/docx "$out/official-office/docx"
+    cp -R ${anthropicOfficialSkills}/skills/xlsx "$out/official-office/xlsx"
+    cp -R ${anthropicOfficialSkills}/skills/pptx "$out/official-office/pptx"
+    cp -R ${openaiOfficialSkills}/skills/.curated/pdf "$out/official-office/pdf"
   '';
 
   agencyAgentsHermesSkills = pkgs.runCommand "agency-agents-hermes-skills" { } ''
@@ -103,19 +106,12 @@ in
   ];
 
   systemd.tmpfiles.rules = [
-    "d /var/lib/hermes/.hermes/skills/agency-agents 0755 hermes hermes - -"
     "C+ /var/lib/hermes/.hermes/skills/agency-agents - hermes hermes - ${agencyAgentsHermesSkills}/agency-agents"
 
-    "d /var/lib/hermes/.hermes/skills/superpowers 0755 hermes hermes - -"
     "C+ /var/lib/hermes/.hermes/skills/superpowers - hermes hermes - ${superpowers}/skills"
 
-    "d /var/lib/hermes/.hermes/skills/productivity 0755 hermes hermes - -"
-    "C+ /var/lib/hermes/.hermes/skills/productivity/docx - hermes hermes - ${anthropicOfficeSkills}/productivity/docx"
-    "C+ /var/lib/hermes/.hermes/skills/productivity/xlsx - hermes hermes - ${anthropicOfficeSkills}/productivity/xlsx"
-    "C+ /var/lib/hermes/.hermes/skills/productivity/pptx - hermes hermes - ${anthropicOfficeSkills}/productivity/pptx"
-    "C+ /var/lib/hermes/.hermes/skills/productivity/pdf - hermes hermes - ${anthropicOfficeSkills}/productivity/pdf"
+    "C+ /var/lib/hermes/.hermes/skills/official-office - hermes hermes - ${officeDocumentSkills}/official-office"
 
-    "d /var/lib/hermes/.hermes/skills/custom 0755 hermes hermes - -"
     "C+ /var/lib/hermes/.hermes/skills/custom - hermes hermes - ${hermesDeclarativeState}/skills/custom"
 
     "d /var/lib/hermes/.hermes/memories 0755 hermes hermes - -"

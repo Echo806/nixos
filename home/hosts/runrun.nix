@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 
 {
   imports = [
@@ -40,7 +40,7 @@
   home.sessionVariables = {
     http_proxy = "http://127.0.0.1:7897";
     https_proxy = "http://127.0.0.1:7897";
-    all_proxy = "socks5:127.0.0.1:7897";
+    all_proxy = "socks5://127.0.0.1:7897";
   };
 
   # ── x250 专属: HiDPI (4K 屏) ──
@@ -52,8 +52,18 @@
   home.stateVersion = "25.11";
   programs.home-manager.enable = true;
 
-  # Host-specific Noctalia desktop widget coordinates for runrun
+  # Host-specific Noctalia desktop widget coordinates and language for runrun
   programs.noctalia-shell.settings = {
+    general = {
+      language = lib.mkForce "zh-CN";
+    };
+
+    # runrun 当前屏幕只有 1024x768 时，默认 single-row 大按钮会横向溢出，看起来不像铺满屏幕。
+    # grid 在小分辨率下更稳；等 VGA-1 正常跑到 1920x1080 后仍然美观。
+    sessionMenu = {
+      largeButtonsLayout = "grid";
+    };
+
     desktopWidgets = {
       enabled = true;
       monitorWidgets = [

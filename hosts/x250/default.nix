@@ -44,6 +44,12 @@ in
   programs.clash-verge.enable = true;
 
   services.tailscale.enable = true;
+
+  # Removable drives in file managers and automatic USB mounting.
+  services.udisks2.enable = true;
+  services.gvfs.enable = true;
+  services.devmon.enable = true;
+
   services.sunshine = {
     enable = true;
     autoStart = true;
