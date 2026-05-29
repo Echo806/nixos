@@ -71,13 +71,9 @@ in
   system.stateVersion = "25.11";
 
   # runrun 专属：当前 VGA 外接屏 EDID 读取失败时，内核只暴露 1024x768。
-  # 必须写入 /etc/niri/config.kdl（系统 niri 配置），不能写 ~/.config/niri/config.kdl；
-  # 否则 niri 会优先读取用户配置，导致公共 binds 整段失效。
-  environment.etc."niri/config.kdl".text = pkgs.lib.mkAfter ''
-    output "VGA-1" {
-        mode custom=true "1920x1080@60"
-        modeline 172.80 1920 2040 2248 2576 1080 1081 1084 1118 "-hsync" "+vsync"
-        scale 1.0
-    }
-  '';
+  # 之前强制写入 1920x1080 modeline，但日志显示 niri 在创建 DRM compositor 时失败：
+  # "Error testing state" / "No space left on device"，导致没有可用 output，桌面黑屏。
+  # 先不要强制自定义 1080p，让 niri 使用内核探测到的 1024x768，优先保证能进桌面。
+  # 如果之后需要恢复 1080p，应换一条 VGA/转接线或先确认该屏幕真实 modeline。
+
 }
