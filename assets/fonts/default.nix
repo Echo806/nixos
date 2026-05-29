@@ -1,54 +1,39 @@
 { pkgs }:
 
 {
+  # Minimal office-document font set.  Keep Windows-compatible Chinese fonts for
+  # documents authored on Windows/WPS/Office, plus Noto CJK as broad fallback.
   system = with pkgs; [
-    sarasa-gothic
+    noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
-    source-han-sans
-    source-han-serif
-    wqy_microhei
-    wqy_zenhei
     corefonts
     vista-fonts
     vista-fonts-chs
     local-windows-fonts
     ms-win10-fonts
     ms-win10-sc-sup-fonts
-    wps-cjk-font-aliases
-    lxgw-wenkai
-    lxgw-fusionkai
-    cns11643-kai
-    nerd-fonts.jetbrains-mono
-    wps-symbol-fonts
   ];
 
   home = with pkgs; [
-    sarasa-gothic
+    noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-cjk-serif
-    source-han-sans
-    source-han-serif
-    wqy_microhei
-    wqy_zenhei
-    lxgw-wenkai
-    lxgw-fusionkai
   ];
 
   steam = with pkgs; [
     noto-fonts-cjk-sans
-    wqy_microhei
   ];
 
   systemFontconfig = {
-    sansSerif = [ "Sarasa Gothic SC" "Noto Sans CJK SC" "Noto Sans" ];
-    serif = [ "Noto Serif CJK SC" "Source Han Serif SC" "Noto Serif" ];
-    monospace = [ "Sarasa Mono SC" ];
+    sansSerif = [ "Microsoft YaHei" "Noto Sans CJK SC" "Noto Sans" ];
+    serif = [ "SimSun" "Noto Serif CJK SC" "Noto Serif" ];
+    monospace = [ "Microsoft YaHei Mono" "Noto Sans Mono CJK SC" "Noto Sans Mono" ];
   };
 
   homeFontconfig = {
-    sansSerif = [ "Sarasa Gothic SC" "Noto Sans CJK SC" "WenQuanYi Micro Hei" "Noto Sans" ];
-    serif = [ "Noto Serif CJK SC" "Source Han Serif SC" "Noto Serif" ];
-    monospace = [ "Sarasa Mono SC" ];
+    sansSerif = [ "Microsoft YaHei" "Noto Sans CJK SC" "Noto Sans" ];
+    serif = [ "SimSun" "Noto Serif CJK SC" "Noto Serif" ];
+    monospace = [ "Microsoft YaHei Mono" "Noto Sans Mono CJK SC" "Noto Sans Mono" ];
   };
 }

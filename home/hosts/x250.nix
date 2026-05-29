@@ -18,8 +18,7 @@
     ../apps/neovim/default.nix
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
-    ../apps/onlyoffice-desktopeditors.nix
-    ../apps/wpsoffice.nix
+    ../apps/libreoffice.nix
     ../apps/tailscale.nix
     ../apps/sunshine.nix
     ../apps/moonlight.nix
