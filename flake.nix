@@ -33,64 +33,67 @@
   };
 
   outputs = inputs@{ self, nixpkgs, home-manager, nixos-hardware, noctalia, ... }:
-  let
-    mkHomeManager = homeHostPath: {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.users.run.imports = [
-        noctalia.homeModules.default
-        homeHostPath
-      ];
-      home-manager.extraSpecialArgs = { inherit inputs; };
-    };
-  in {
-    nixosConfigurations = {
-      # ThinkPad X250 — 当前主力机
-      x250 = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ({ ... }: {
-            nixpkgs.overlays = [
-              (final: prev: {
-                maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
-                windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
-              })
-            ];
-          })
-          ./hosts/x250
-          home-manager.nixosModules.home-manager
-          (mkHomeManager ./home/hosts/x250.nix)
+    let
+      mkHomeManager = homeHostPath: {
+        home-manager.useGlobalPkgs = true;
+        home-manager.useUserPackages = true;
+        home-manager.users.run.imports = [
+          noctalia.homeModules.default
+          homeHostPath
         ];
+        home-manager.extraSpecialArgs = { inherit inputs; };
       };
+    in
+    {
+      nixosConfigurations = {
+        # ThinkPad X250 — 当前主力机
+        x250 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+          modules = [
+            ({ ... }: {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
+                  windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
+                  bb-browser = prev.callPackage ./agent/tools/bb-browser { };
+                })
+              ];
+            })
+            ./hosts/x250
+            home-manager.nixosModules.home-manager
+            (mkHomeManager ./home/hosts/x250.nix)
+          ];
+        };
 
-      # Lenovo Legion R9000P — 待添加
-      # r9000p = nixpkgs.lib.nixosSystem {
-      #   system = "x86_64-linux";
-      #   specialArgs = { inherit inputs; };
-      #   modules = [
-      #     ./hosts/r9000p
-      #     home-manager.nixosModules.home-manager
-      #     (mkHomeManager ./home/hosts/r9000p.nix)
-      #   ];
-      # };
-      runrun = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = { inherit inputs; };
-        modules = [
-          ({ ... }: {
-            nixpkgs.overlays = [
-              (final: prev: {
-                maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
-                windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
-              })
-            ];
-          })
-          ./hosts/runrun
-          home-manager.nixosModules.home-manager
-          (mkHomeManager ./home/hosts/runrun.nix)
-        ];
+        # Lenovo Legion R9000P — 待添加
+        # r9000p = nixpkgs.lib.nixosSystem {
+        #   system = "x86_64-linux";
+        #   specialArgs = { inherit inputs; };
+        #   modules = [
+        #     ./hosts/r9000p
+        #     home-manager.nixosModules.home-manager
+        #     (mkHomeManager ./home/hosts/r9000p.nix)
+        #   ];
+        # };
+        runrun = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+          modules = [
+            ({ ... }: {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
+                  windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
+                  bb-browser = prev.callPackage ./agent/tools/bb-browser { };
+                })
+              ];
+            })
+            ./hosts/runrun
+            home-manager.nixosModules.home-manager
+            (mkHomeManager ./home/hosts/runrun.nix)
+          ];
+        };
       };
     };
-  };
 }
