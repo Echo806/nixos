@@ -17,7 +17,13 @@
   ];
 
   steam = with pkgs; [
+    # Steam runs inside an FHS/pressure-vessel environment. Fonts visible to the
+    # host fontconfig are not necessarily available in that runtime, so include
+    # the same CJK-capable Windows/Noto font set used by the system.
+    noto-fonts
     noto-fonts-cjk-sans
+    noto-fonts-cjk-serif
+    windows-fonts
   ];
 
   systemFontconfig = {
