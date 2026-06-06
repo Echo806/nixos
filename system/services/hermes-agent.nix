@@ -13,6 +13,7 @@ in
 
   imports = [
     inputs.hermes-agent.nixosModules.default
+    ../../agent/tools/bb-browser/daemon-service.nix
   ];
 
   systemd.tmpfiles.rules = hermes.tmpfilesRules;

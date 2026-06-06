@@ -66,6 +66,11 @@ in
     gnome-keyring
     xwayland-satellite
     moonlight-qt
+
+    # Android TV 开发
+    android-studio
+    android-tools          # adb / fastboot
+    jdk21                  # Android Gradle Plugin 需要 JDK 21
   ];
 
   system.stateVersion = "25.11";

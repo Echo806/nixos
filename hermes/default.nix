@@ -10,6 +10,8 @@ let
     cp ${state}/memory/user.md "$out/memories/user.md"
     cp ${state}/memory/memory.md "$out/memories/memory.md"
   '';
+
+  chrome-remote = pkgs.callPackage ../agent/tools/bb-browser/chrome-wrapper.nix { };
 in
 {
   tmpfilesRules = [
@@ -49,5 +51,7 @@ in
   packages = [
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.bb-browser
+    pkgs.google-chrome
+    chrome-remote
   ];
 }
