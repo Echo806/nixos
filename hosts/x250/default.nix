@@ -36,14 +36,32 @@ in
   networking.hostName = "x250";
   networking.proxy.default = "http://127.0.0.1:7897/";
   networking.proxy.noProxy = "127.0.0.1,localhost";
-  networking.networkmanager.enable = true;
+  networking.networkmanager = {
+    enable = true;
+    # Let systemd-resolved handle split DNS instead of letting resolvconf
+    # flatten all DNS servers into /etc/resolv.conf.
+    dns = "systemd-resolved";
+  };
+
+  services.resolved = {
+    enable = true;
+    # Public DNS fallback only; per-link DNS from NetworkManager and Tailscale
+    # is still preferred when available.
+    settings.Resolve.FallbackDNS = [ "1.1.1.1" "8.8.8.8" ];
+  };
 
   # System-level programs
   programs.steam.enable = true;
   programs.steam.fontPackages = fonts.steam;
   programs.clash-verge.enable = true;
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    # With systemd-resolved enabled, Tailscale can install split DNS routes:
+    # only *.tailnet.tomandjerry2026.xyz goes to MagicDNS, while ordinary
+    # domains such as github.com continue to use the current network's DNS.
+    extraSetFlags = [ "--accept-dns=true" ];
+  };
 
   # Removable drives in file managers and automatic USB mounting.
   services.udisks2.enable = true;
