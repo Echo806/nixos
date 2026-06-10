@@ -12,6 +12,7 @@ in
     ../../system/base/nix-settings.nix
     ../../system/base/fonts.nix
     ../../system/desktop/niri.nix
+    ../../system/desktop/clipboard-bridge.nix
     ../../system/desktop/noctalia.nix
     ../../system/hardware/bluetooth.nix
     ../../system/hardware/audio.nix
@@ -83,6 +84,8 @@ in
     networkmanagerapplet
     gnome-keyring
     xwayland-satellite
+    wl-clipboard
+    xclip
   ];
 
   system.stateVersion = "25.11";
