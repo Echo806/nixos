@@ -34,8 +34,9 @@
   programs.neovim.defaultEditor = true;
   programs.bash.enable = true;
 
-  # ── x250 专属: 代理 (clash-verge) ──
+  # ── runrun 专属: Hermes + 代理 (clash-verge) ──
   home.sessionVariables = {
+    HERMES_HOME = "/home/run/.hermes";
     http_proxy = "http://127.0.0.1:7897";
     https_proxy = "http://127.0.0.1:7897";
     all_proxy = "socks5://127.0.0.1:7897";

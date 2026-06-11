@@ -1,6 +1,7 @@
 { config, pkgs, inputs, ... }:
 let
   fonts = import ../../assets/fonts { inherit pkgs; };
+  tailnetNoProxy = "127.0.0.1,localhost,.tailnet.tomandjerry2026.xyz,desktop.tailnet.tomandjerry2026.xyz,100.64.0.0/10,fd7a:115c:a1e0::/48";
 in
 {
   imports = [
@@ -36,7 +37,13 @@ in
   # Networking
   networking.hostName = "x250";
   networking.proxy.default = "http://127.0.0.1:7897/";
-  networking.proxy.noProxy = "127.0.0.1,localhost";
+  # Do not send tailnet/MagicDNS traffic through Clash; it must route directly
+  # over tailscale0 to services such as desktop:8328.
+  networking.proxy.noProxy = tailnetNoProxy;
+  environment.sessionVariables = {
+    no_proxy = tailnetNoProxy;
+    NO_PROXY = tailnetNoProxy;
+  };
   networking.networkmanager = {
     enable = true;
     # Let systemd-resolved handle split DNS instead of letting resolvconf

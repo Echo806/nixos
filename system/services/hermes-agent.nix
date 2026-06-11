@@ -31,8 +31,4 @@ in
   };
 
   environment.systemPackages = hermes.packages;
-
-  environment.variables = {
-    HERMES_HOME = "/var/lib/hermes/.hermes";
-  };
 }
