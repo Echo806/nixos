@@ -8,6 +8,8 @@
 {
   programs.neovim = {
     enable = true;
+    withRuby = false;
+    withPython3 = true;
 
     # Tools and LSP servers available on $PATH for Neovim.
     extraPackages = with pkgs; [

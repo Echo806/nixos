@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, lib, ... }:
 let
   fonts = import ../../assets/fonts { inherit pkgs; };
   tailnetNoProxy = "127.0.0.1,localhost,.tailnet.tomandjerry2026.xyz,desktop.tailnet.tomandjerry2026.xyz,100.64.0.0/10,fd7a:115c:a1e0::/48";
@@ -20,7 +20,7 @@ in
     ../../system/hardware/power.nix
     ../../system/services/printing.nix
     ../../system/services/sshfs.nix
-    ../../system/services/hermes-agent.nix
+    ../../hermes
     ../../system/services/office-tools.nix
   ];
 
@@ -31,8 +31,43 @@ in
   # LTS 内核
   boot.kernelPackages = pkgs.linuxPackages_6_12;
 
-  # 禁用 systemd-based initrd（ThinkPad X250 Broadwell 上崩溃）
+  # Keep the normal boot path on scripted initrd for now: systemd initrd
+  # previously crashed on this ThinkPad X250 Broadwell.  NixOS warns that
+  # scripted initrd is deprecated, so expose a separate boot-menu test entry
+  # below before changing the default.
   boot.initrd.systemd.enable = false;
+
+  specialisation.systemd-initrd-test.configuration = {
+    # Boot-menu-only test generation.  The default x250 entry remains on the
+    # known-good scripted initrd, so a failed test can be recovered by simply
+    # rebooting into the normal/default generation.
+    # Hypothesis for the no-log black screen: the handoff to early KMS/i915 in
+    # the systemd initrd path blanks the panel before systemd can show status or
+    # persist logs.  This diagnostic entry therefore avoids loading i915 in
+    # stage-1; the normal/default boot entry still loads i915 as before.
+    boot.initrd.kernelModules = lib.mkForce [ "dm_mod" ];
+    boot.initrd.systemd = {
+      enable = lib.mkForce true;
+      # If stage-1 fails, drop to an unauthenticated initrd emergency shell
+      # instead of silently hanging on a black screen.  This applies only to
+      # this specialisation test entry, not the normal/default boot entry.
+      emergencyAccess = lib.mkForce true;
+    };
+    boot.consoleLogLevel = lib.mkForce 7;
+    boot.kernelParams = [
+      "debug"
+      "console=tty0"
+      "systemd.crash_chvt=1"
+      "systemd.default_standard_output=journal+console"
+      "systemd.default_standard_error=journal+console"
+      "systemd.log_level=debug"
+      "systemd.log_target=console"
+      "systemd.show_status=1"
+      "rd.systemd.debug_shell=tty9"
+      "rd.systemd.default_debug_tty=tty9"
+      "rd.systemd.break=pre-mount"
+    ];
+  };
 
   # Networking
   networking.hostName = "x250";

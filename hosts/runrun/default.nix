@@ -19,7 +19,7 @@ in
     ../../system/services/printing.nix
     ../../system/services/sshfs.nix
     ../../system/services/samba.nix
-    ../../system/services/hermes-agent.nix
+    ../../hermes
     ../../system/services/office-tools.nix
   ];
 

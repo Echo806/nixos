@@ -1,4 +1,4 @@
-{ pkgs, inputs }:
+{ config, pkgs, inputs, ... }:
 let
   state = ./.;
   skills = import ../agent/skills { inherit pkgs; };
@@ -14,7 +14,20 @@ let
   chrome-remote = pkgs.callPackage ../agent/tools/bb-browser/chrome-wrapper.nix { };
 in
 {
-  tmpfilesRules = [
+  users.groups.hermes = { };
+  users.users.hermes = {
+    isSystemUser = true;
+    group = "hermes";
+    home = "/var/lib/hermes";
+    createHome = true;
+  };
+
+  imports = [
+    inputs.hermes-agent.nixosModules.default
+    ../agent/tools/bb-browser/daemon-service.nix
+  ];
+
+  systemd.tmpfiles.rules = [
     "d /var/lib/hermes 0755 hermes hermes - -"
     "d /var/lib/hermes/.hermes 0755 hermes hermes - -"
     "d /var/lib/hermes/.hermes/skills 0755 hermes hermes - -"
@@ -33,22 +46,32 @@ in
     "r /var/lib/hermes/.hermes/gateway.lock - - - - -"
   ];
 
-  settings = {
-    model = {
-      base_url = "https://openrouter.ai/api/v1";
-      default = "deepseek/deepseek-v4-flash:free";
+  services.hermes-agent = {
+    # The user no longer wants QQ/social-media integration, so do not run the
+    # always-on messaging gateway service. Keep CLI/config/skills below managed
+    # explicitly for normal local Hermes use.
+    enable = false;
+
+    settings = {
+      model = {
+        base_url = "https://openrouter.ai/api/v1";
+        default = "deepseek/deepseek-v4-flash:free";
+      };
+      toolsets = [ "all" ];
+      plugins.enabled = [ ];
+      skills.external_dirs = [ "/var/lib/hermes/.hermes/skills" ];
+      memory = {
+        memory_enabled = true;
+        user_profile_enabled = true;
+      };
+      inherit mcpServers;
     };
-    toolsets = [ "all" ];
-    plugins.enabled = [ ];
-    skills.external_dirs = [ "/var/lib/hermes/.hermes/skills" ];
-    memory = {
-      memory_enabled = true;
-      user_profile_enabled = true;
-    };
-    inherit mcpServers;
+
+    # 密钥走环境文件（/var/lib/hermes/env），不在 Git 中跟踪
+    environmentFiles = [ "/var/lib/hermes/env" ];
   };
 
-  packages = [
+  environment.systemPackages = [
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.bb-browser
     pkgs.google-chrome
