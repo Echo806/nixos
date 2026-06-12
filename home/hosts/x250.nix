@@ -20,7 +20,7 @@
     ../apps/libreoffice.nix
     ../apps/tailscale.nix
     ../apps/sunshine.nix
-    ../apps/moonlight.nix
+    ../apps/moonlight-qt.nix
     ../apps/typora.nix
     ../apps/yazi.nix
     ../apps/opencode.nix

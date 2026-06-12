@@ -68,7 +68,6 @@ in
     xwayland-satellite
     wl-clipboard
     xclip
-    moonlight-qt
 
     # Android TV 开发
     android-studio
