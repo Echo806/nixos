@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # X250 needs the old scripted initrd path: systemd initrd black-screens on
+    # this Broadwell ThinkPad with no journal/pstore. Keep a separate nixpkgs
+    # input so other hosts can move forward while x250 stays on a known-good
+    # pre-removal implementation if/when scripted initrd disappears upstream.
+    nixpkgs-x250-legacy.url = "github:nixos/nixpkgs/549bd84d6279f9852cae6225e372cc67fb91a4c1";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     llm-agents.url = "github:numtide/llm-agents.nix";
 
@@ -19,20 +24,7 @@
     };
   };
 
-  nixConfig = {
-    extra-substituters = [
-      "https://cache.garnix.io"
-      "https://attic.xuyh0120.win/lantian"
-      "https://noctalia.cachix.org"
-    ];
-    extra-trusted-public-keys = [
-      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
-      "lantian:EeAUQ+W+6r7EtwnmYjeVwx5kOGEBpjlBfPlzGlTNvHc="
-      "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
-    ];
-  };
-
-  outputs = inputs@{ self, nixpkgs, home-manager, nixos-hardware, noctalia, ... }:
+  outputs = inputs@{ self, nixpkgs, nixpkgs-x250-legacy, home-manager, nixos-hardware, noctalia, ... }:
     let
       mkHomeManager = homeHostPath: {
         home-manager.useGlobalPkgs = true;
@@ -47,9 +39,9 @@
     {
       nixosConfigurations = {
         # ThinkPad X250 — 当前主力机
-        x250 = nixpkgs.lib.nixosSystem {
+        x250 = nixpkgs-x250-legacy.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs; pkgsUnstable = nixpkgs.legacyPackages.x86_64-linux; };
           modules = [
             ({ ... }: {
               nixpkgs.overlays = [

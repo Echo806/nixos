@@ -41,13 +41,14 @@ in
     # Boot-menu-only test generation.  The default x250 entry remains on the
     # known-good scripted initrd, so a failed test can be recovered by simply
     # rebooting into the normal/default generation.
-    # Hypothesis for the no-log black screen: the handoff to early KMS/i915 in
-    # the systemd initrd path blanks the panel before systemd can show status or
-    # persist logs.  This diagnostic entry therefore avoids loading i915 in
-    # stage-1; the normal/default boot entry still loads i915 as before.
-    boot.initrd.kernelModules = lib.mkForce [ "dm_mod" ];
+    # Current hypothesis for the no-log black screen: systemd initrd's default
+    # TPM2/FIDO2 early-boot integration may hang on this old X250 firmware/TPM
+    # before systemd can show status or persist logs. Keep the normal/default
+    # boot entry unchanged; disable these only in this diagnostic entry.
     boot.initrd.systemd = {
       enable = lib.mkForce true;
+      tpm2.enable = lib.mkForce false;
+      fido2.enable = lib.mkForce false;
       # If stage-1 fails, drop to an unauthenticated initrd emergency shell
       # instead of silently hanging on a black screen.  This applies only to
       # this specialisation test entry, not the normal/default boot entry.
@@ -55,6 +56,11 @@ in
     };
     boot.consoleLogLevel = lib.mkForce 7;
     boot.kernelParams = [
+      # QEMU can start this same kernel/initrd and reaches systemd initrd,
+      # while the real X250 still goes black before any persistent journal.
+      # Test the display/KMS hypothesis next: keep early boot on firmware
+      # framebuffer instead of allowing i915 KMS takeover in initrd.
+      "nomodeset"
       "debug"
       "console=tty0"
       "systemd.crash_chvt=1"
