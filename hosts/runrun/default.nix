@@ -46,6 +46,16 @@ in
 
   services.tailscale.enable = true;
 
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      PasswordAuthentication = true;
+      KbdInteractiveAuthentication = true;
+      PermitRootLogin = "yes";
+    };
+  };
+
   # Removable drives in file managers (Nautilus/GVfs uses udisks2 to mount USB disks).
   services.udisks2.enable = true;
   services.gvfs.enable = true;
