@@ -112,6 +112,16 @@ in
     extraSetFlags = [ "--accept-dns=true" ];
   };
 
+  services.openssh = {
+    enable = true;
+    openFirewall = true;
+    settings = {
+      PasswordAuthentication = true;
+      KbdInteractiveAuthentication = true;
+      PermitRootLogin = "yes";
+    };
+  };
+
   # Removable drives in file managers and automatic USB mounting.
   services.udisks2.enable = true;
   services.gvfs.enable = true;
