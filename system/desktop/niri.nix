@@ -290,6 +290,22 @@ in
         Mod+Shift+Minus { set-window-height "-5%"; }
         Mod+Shift+Plus { set-window-height "+5%"; }
     }
+
+    // 最近窗口切换器（niri 内置默认值，显式写入便于版本管理）
+    // Mod+grave = Mod+`，filter="app-id" 表示只在当前应用的窗口之间切换。
+    recent-windows {
+        binds {
+            Alt+Tab         { next-window; }
+            Alt+Shift+Tab   { previous-window; }
+            Alt+grave       { next-window     filter="app-id"; }
+            Alt+Shift+grave { previous-window filter="app-id"; }
+
+            Mod+Tab         { next-window; }
+            Mod+Shift+Tab   { previous-window; }
+            Mod+grave       { next-window     filter="app-id"; }
+            Mod+Shift+grave { previous-window filter="app-id"; }
+        }
+    }
   '';
 
   services.xserver.xkb = {
