@@ -20,6 +20,8 @@ in
     ../../system/hardware/power.nix
     ../../system/services/printing.nix
     ../../system/services/sshfs.nix
+    ../../system/services/openlist.nix
+    ../../system/services/cloudflared-openlist.nix
     ../../hermes
     ../../system/services/office-tools.nix
   ];

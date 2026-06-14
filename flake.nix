@@ -86,6 +86,15 @@
             (mkHomeManager ./home/hosts/runrun.nix)
           ];
         };
+
+        # NAS — OpenList + Cloudflare Tunnel entrypoint
+        nas = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+          modules = [
+            ./hosts/nas.nix
+          ];
+        };
       };
     };
 }
