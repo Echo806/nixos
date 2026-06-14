@@ -1,9 +1,191 @@
 { config, pkgs, ... }:
 
+let
+  trayNiriFocus = pkgs.writeShellApplication {
+    name = "tray-niri-focus";
+    runtimeInputs = [
+      pkgs.niri
+      pkgs.python3
+    ];
+    text = ''
+      exec python3 - "$@" <<'PY'
+      import glob
+      import json
+      import os
+      import re
+      import subprocess
+      import sys
+      import time
+
+      APP_ALIASES = {
+          "tray-icon-tray-app-main": ["clash-verge", "clash-verge-rev"],
+          "tray-icon-main-1": ["clash-verge", "clash-verge-rev"],
+          "tray-icon": ["clash-verge", "clash-verge-rev"],
+          "icon-1": ["clash-verge", "clash-verge-rev"],
+          "clash-verge": ["clash-verge", "clash-verge-rev"],
+          "clashverge": ["clash-verge", "clash-verge-rev"],
+          "clash-verge-rev": ["clash-verge", "clash-verge-rev"],
+          "chrome-status-icon-1": ["qq"],
+          "qq": ["qq"],
+          "sunshine": ["sunshine"],
+          "wechat": ["wechat"],
+      }
+
+      LAUNCHERS = {
+          "clash-verge": ["clash-verge"],
+          "clash-verge-rev": ["clash-verge"],
+      }
+
+      def normalized(value):
+          return re.sub(r"[^a-z0-9]+", "-", (value or "").lower()).strip("-")
+
+      def expand_candidates(values):
+          candidates = []
+          for value in values:
+              name = normalized(value)
+              if not name:
+                  continue
+              candidates.extend(APP_ALIASES.get(name, []))
+              candidates.append(name)
+          seen = set()
+          return [x for x in candidates if not (x in seen or seen.add(x))]
+
+      def env_with_niri_socket():
+          env = os.environ.copy()
+          runtime_dir = env.get("XDG_RUNTIME_DIR", f"/run/user/{os.getuid()}")
+          env["XDG_RUNTIME_DIR"] = runtime_dir
+          if not env.get("NIRI_SOCKET") or not os.path.exists(env["NIRI_SOCKET"]):
+              sockets = sorted(glob.glob(os.path.join(runtime_dir, "niri.*.sock")))
+              if sockets:
+                  env["NIRI_SOCKET"] = sockets[0]
+          return env
+
+      def run(args, **kwargs):
+          return subprocess.run(args, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, **kwargs)
+
+      def focus(candidates):
+          env = env_with_niri_socket()
+          wanted = {normalized(candidate) for candidate in candidates}
+          for _ in range(12):
+              result = run(["niri", "msg", "-j", "windows"], env=env)
+              try:
+                  windows = json.loads(result.stdout)
+              except json.JSONDecodeError:
+                  windows = []
+              for window in windows:
+                  app_id = normalized(window.get("app_id"))
+                  title = normalized(window.get("title"))
+                  if app_id in wanted or title in wanted:
+                      window_id = str(window["id"])
+                      run(["niri", "msg", "action", "focus-window", "--id", window_id], env=env)
+                      run(["niri", "msg", "action", "unset-window-urgent", "--id", window_id], env=env)
+                      return True
+              time.sleep(0.15)
+          return False
+
+      candidates = expand_candidates(sys.argv[1:])
+      if not candidates:
+          raise SystemExit(0)
+      if focus(candidates):
+          raise SystemExit(0)
+
+      for candidate in candidates:
+          launcher = LAUNCHERS.get(normalized(candidate))
+          if launcher:
+              subprocess.Popen(launcher, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+              focus(candidates)
+              break
+      PY
+    '';
+  };
+
+  trayNiriActivation = pkgs.writeShellApplication {
+    name = "tray-niri-activation";
+    runtimeInputs = [
+      pkgs.dbus
+      pkgs.systemd
+      pkgs.niri
+      pkgs.python3
+      trayNiriFocus
+    ];
+    text = ''
+      exec python3 - <<'PY'
+      import re
+      import subprocess
+      import time
+
+      IGNORE_IDS = {
+          "fcitx", "nm-applet", "network", "bluetooth", "volume", "pulseaudio",
+      }
+
+      def run(args):
+          return subprocess.run(args, text=True, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+
+      def normalized(value):
+          return re.sub(r"[^a-z0-9]+", "-", (value or "").lower()).strip("-")
+
+      def prop(service, path, name):
+          result = run(["busctl", "--user", "get-property", service, path, "org.kde.StatusNotifierItem", name])
+          match = re.search(r'"([^"]*)"', result.stdout)
+          return match.group(1) if match else ""
+
+      def registered_items():
+          result = run([
+              "busctl", "--user", "get-property",
+              "org.kde.StatusNotifierWatcher",
+              "/StatusNotifierWatcher",
+              "org.kde.StatusNotifierWatcher",
+              "RegisteredStatusNotifierItems",
+          ])
+          return re.findall(r'"([^"/]+)(/[^" ]+)"', result.stdout)
+
+      def tray_targets():
+          targets = {}
+          for service, path in registered_items():
+              raw_id = prop(service, path, "Id")
+              raw_title = prop(service, path, "Title")
+              names = [normalized(raw_id), normalized(raw_title)]
+              if all(not name for name in names):
+                  continue
+              if any(name in IGNORE_IDS for name in names):
+                  continue
+              targets[service] = [raw_title, raw_id, service, path]
+          return targets
+
+      targets = tray_targets()
+      last_refresh = 0.0
+      monitor = subprocess.Popen(
+          ["dbus-monitor", "--session", "type='method_call',interface='org.kde.StatusNotifierItem'"],
+          text=True,
+          stdout=subprocess.PIPE,
+          stderr=subprocess.DEVNULL,
+      )
+
+      assert monitor.stdout is not None
+      for line in monitor.stdout:
+          match = re.search(r'destination=([^ ]+)', line)
+          if not match:
+              continue
+          destination = match.group(1)
+          now = time.monotonic()
+          if destination not in targets or now - last_refresh > 10:
+              targets = tray_targets()
+              last_refresh = now
+          candidates = targets.get(destination, [])
+          if candidates:
+              subprocess.Popen(["tray-niri-focus", *candidates], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+      PY
+    '';
+  };
+in
 {
   services.xserver.enable = true;
 
-  environment.systemPackages = [ pkgs.warpd ];
+  environment.systemPackages = [
+    pkgs.warpd
+    trayNiriFocus
+    trayNiriActivation
+  ];
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -26,6 +208,7 @@
 
     // 自启动
     spawn-at-startup "xwayland-satellite"
+    spawn-at-startup "tray-niri-activation"
     spawn-at-startup "noctalia-shell"
     spawn-at-startup "fcitx5" "-d"
     spawn-at-startup "polkit-gnome-authentication-agent-1"

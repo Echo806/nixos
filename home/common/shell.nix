@@ -1,8 +1,101 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 
+let
+  noctaliaBase = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  noctaliaShell = pkgs.runCommand "noctalia-shell-tray-names" {
+    nativeBuildInputs = [ pkgs.python3 ];
+  } ''
+    cp -a ${noctaliaBase}/. $out/
+    chmod u+w \
+      $out/share/noctalia-shell/Modules/Bar/Widgets/Tray.qml \
+      $out/share/noctalia-shell/Modules/Panels/Tray/TrayDrawerPanel.qml \
+      $out/share/noctalia-shell/Modules/Bar/Extras/TrayMenu.qml
+
+    python3 - <<'PY'
+import os
+from pathlib import Path
+
+out = Path(os.environ["out"])
+tray = out / "share/noctalia-shell/Modules/Bar/Widgets/Tray.qml"
+drawer = out / "share/noctalia-shell/Modules/Panels/Tray/TrayDrawerPanel.qml"
+menu = out / "share/noctalia-shell/Modules/Bar/Extras/TrayMenu.qml"
+
+func = """
+  function trayDisplayName(item) {
+    if (!item) return "Tray Item";
+
+    function clean(value) {
+      return (value || "").toString().trim();
+    }
+
+    function isBadMachineName(value) {
+      const text = clean(value).toLowerCase();
+      return !text
+        || text === "tray-id"
+        || text.includes("tray-icon")
+        || text.includes("chrome_status_icon")
+        || text.includes("chrome-status-icon");
+    }
+
+    // Prefer user-facing SNI fields first. Id/name are often internal DBus
+    // identifiers such as chrome_status_icon_1 or tray-icon tray app main.
+    const preferred = clean(item.tooltipTitle) || clean(item.title);
+    if (preferred) return preferred;
+
+    if (!isBadMachineName(item.name)) return clean(item.name);
+    if (!isBadMachineName(item.id)) return clean(item.id);
+
+    // Small fallback set for apps that do not publish any useful title/tooltip.
+    const raw = [item.id || "", item.name || "", item.icon || ""].join(" ").toLowerCase();
+    if (raw.includes("chrome_status_icon") || raw.includes("chrome-status-icon")) return "QQ";
+
+    return "Tray Item";
+  }
+"""
+
+def patch_once(path, old, new):
+    text = path.read_text()
+    if old not in text:
+        raise SystemExit(f'missing pattern in {path}: {old!r}')
+    path.write_text(text.replace(old, new, 1))
+
+patch_once(tray, '  function _performFilteredItemsUpdate() {', func + '\n  function _performFilteredItemsUpdate() {')
+text = tray.read_text()
+text = text.replace('const title = item.tooltipTitle || item.name || item.id || "";', 'const title = root.trayDisplayName(item);')
+text = text.replace('const title2 = item2.tooltipTitle || item2.name || item2.id || "";', 'const title2 = root.trayDisplayName(item2);')
+text = text.replace('TooltipService.show(tooltipAnchor, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));', 'TooltipService.show(tooltipAnchor, root.trayDisplayName(modelData), BarService.getTooltipDirection(root.screen?.name));')
+tray.write_text(text)
+
+patch_once(drawer, '  // Auto-close drawer when all items are pinned (drawer becomes empty)', func + '\n  // Auto-close drawer when all items are pinned (drawer becomes empty)')
+text = drawer.read_text()
+text = text.replace('const title = item?.tooltipTitle || item?.name || item?.id || "";', 'const title = root.trayDisplayName(item);')
+text = text.replace('TooltipService.show(trayIcon, modelData.tooltipTitle || modelData.name || modelData.id || "Tray Item", BarService.getTooltipDirection(root.screen?.name));', 'TooltipService.show(trayIcon, root.trayDisplayName(modelData), BarService.getTooltipDirection(root.screen?.name));')
+drawer.write_text(text)
+
+patch_once(menu, '  readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)', '  readonly property QsMenuHandle menu: isSubMenu ? null : (trayItem ? trayItem.menu : null)\n' + func)
+text = menu.read_text()
+text = text.replace('const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";', 'const itemName = root.trayDisplayName(trayItem);')
+menu.write_text(text)
+PY
+
+    # The upstream noctalia-shell executable is a binary wrapper that embeds
+    # QS_CONFIG_PATH pointing at the original store path. Since we copied and
+    # patched the QML into $out, force QS_CONFIG_PATH before delegating to the
+    # original wrapper; its --set-default then keeps our patched path.
+    chmod u+w $out/bin $out/bin/noctalia-shell
+    mv $out/bin/noctalia-shell $out/bin/.noctalia-shell-orig
+    cat > $out/bin/noctalia-shell <<EOF
+#!/bin/sh
+export QS_CONFIG_PATH="$out/share/noctalia-shell"
+exec "$out/bin/.noctalia-shell-orig" "\$@"
+EOF
+    chmod +x $out/bin/noctalia-shell
+  '';
+in
 {
   programs.noctalia-shell = {
     enable = true;
+    package = noctaliaShell;
     settings = {
       bar = {
         density = "comfortable";
