@@ -17,6 +17,7 @@
     ../apps/neovim/default.nix
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
+    ../apps/hermes.nix
     ../apps/libreoffice.nix
     ../apps/tailscale.nix
     ../apps/sunshine.nix

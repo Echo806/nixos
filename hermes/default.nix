@@ -64,6 +64,16 @@ in
         memory_enabled = true;
         user_profile_enabled = true;
       };
+      approvals = {
+        mode = "manual";
+        # Keep dangerous-command approval prompts, but remove the practical
+        # countdown by making the timeout effectively infinite.
+        timeout = 2147483647;
+        cron_mode = "deny";
+        mcp_reload_confirm = true;
+        destructive_slash_confirm = true;
+      };
+      clarify.timeout = 2147483647;
       inherit mcpServers;
     };
 
@@ -74,6 +84,7 @@ in
   environment.systemPackages = [
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.bb-browser
+    pkgs.cli-anything-hub
     pkgs.google-chrome
     chrome-remote
   ];

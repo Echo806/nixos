@@ -18,4 +18,15 @@
   };
 
   nixpkgs.config.allowUnfree = true;
+
+  # Keep the conventional NixOS config path writable and pointed at the live
+  # user-owned flake checkout instead of a stale / missing location.
+  system.activationScripts.nixosSourceLink.text = ''
+    if [ -L /etc/nixos ] || [ ! -e /etc/nixos ]; then
+      ln -sfn /home/run/nixos /etc/nixos
+    else
+      echo "/etc/nixos exists and is not a symlink; refusing to replace it" >&2
+      exit 1
+    fi
+  '';
 }
