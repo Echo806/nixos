@@ -1,9 +1,10 @@
 { config, pkgs, ... }:
 
 {
-  home.packages = with pkgs; [
-    steam
-  ];
+  # Do not install pkgs.steam via Home Manager: that creates a per-user
+  # /etc/profiles/per-user/run/bin/steam which shadows the system
+  # programs.steam package and does not inherit programs.steam.fontPackages.
+  # Steam itself is enabled at NixOS level in hosts/*/default.nix.
 
   # Steam's CEF UI hard-codes "Motiva Sans", Helvetica, sans-serif in many
   # places. On Linux it only reliably observes per-user fontconfig, and when

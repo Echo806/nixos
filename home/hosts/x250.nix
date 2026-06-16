@@ -42,7 +42,8 @@
     HERMES_HOME = "/home/run/.hermes";
     http_proxy = "http://127.0.0.1:7897";
     https_proxy = "http://127.0.0.1:7897";
-    all_proxy = "socks5:127.0.0.1:7897";
+    all_proxy = "socks5://127.0.0.1:7897";
+    ALL_PROXY = "socks5://127.0.0.1:7897";
     no_proxy = "127.0.0.1,localhost,.tailnet.tomandjerry2026.xyz,desktop.tailnet.tomandjerry2026.xyz,100.64.0.0/10,fd7a:115c:a1e0::/48";
     NO_PROXY = "127.0.0.1,localhost,.tailnet.tomandjerry2026.xyz,desktop.tailnet.tomandjerry2026.xyz,100.64.0.0/10,fd7a:115c:a1e0::/48";
   };

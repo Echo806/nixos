@@ -41,6 +41,7 @@
     http_proxy = "http://127.0.0.1:7897";
     https_proxy = "http://127.0.0.1:7897";
     all_proxy = "socks5://127.0.0.1:7897";
+    ALL_PROXY = "socks5://127.0.0.1:7897";
   };
 
   # ── x250 专属: HiDPI (4K 屏) ──
