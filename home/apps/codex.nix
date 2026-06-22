@@ -1,7 +1,7 @@
-{ config, pkgs, ... }:
+{ ... }:
 
 {
-  home.packages = with pkgs; [
-    codex
+  imports = [
+    ../agent/adapters/codex.nix
   ];
 }

@@ -48,8 +48,8 @@
                 (final: prev: {
                   maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
                   windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
-                  bb-browser = prev.callPackage ./agent/tools/bb-browser { };
-                  cli-anything-hub = prev.callPackage ./agent/tools/cli-anything-hub.nix { };
+                  bb-browser = prev.callPackage ./home/agent/tools/bb-browser { };
+                  cli-anything-hub = prev.callPackage ./home/agent/tools/cli-anything-hub.nix { };
                 })
               ];
             })
@@ -78,8 +78,8 @@
                 (final: prev: {
                   maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
                   windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
-                  bb-browser = prev.callPackage ./agent/tools/bb-browser { };
-                  cli-anything-hub = prev.callPackage ./agent/tools/cli-anything-hub.nix { };
+                  bb-browser = prev.callPackage ./home/agent/tools/bb-browser { };
+                  cli-anything-hub = prev.callPackage ./home/agent/tools/cli-anything-hub.nix { };
                 })
               ];
             })

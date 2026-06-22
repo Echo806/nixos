@@ -1,20 +1,30 @@
 { lib, pkgs, ... }:
 
+let
+  mcpServers = import ../../agent/mcp/servers.nix;
+  managedMcpYaml = builtins.toJSON { mcp_servers = mcpServers; };
+in
+
 {
+  home.file.".hermes/managed-mcp.yaml".text = managedMcpYaml + "\n";
+
   # Declaratively enforce Hermes CLI prompt-timeout preferences for the normal
-  # run user's ~/.hermes/config.yaml without replacing the rest of the config
-  # (model/provider secrets remain in the local config or env files, not in git).
-  home.activation.hermesNoPromptCountdown = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  # run user's ~/.hermes/config.yaml and shared MCP servers without replacing
+  # the rest of the config (model/provider secrets remain in the local config
+  # or env files, not in git).
+  home.activation.hermesSharedAgentConfig = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     set -euo pipefail
     config="$HOME/.hermes/config.yaml"
+    managed="$HOME/.hermes/managed-mcp.yaml"
     mkdir -p "$HOME/.hermes"
 
-    ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python - "$config" <<'PY'
+    ${pkgs.python3.withPackages (ps: [ ps.pyyaml ])}/bin/python - "$config" "$managed" <<'PY'
 import pathlib
 import sys
 import yaml
 
 path = pathlib.Path(sys.argv[1])
+managed_path = pathlib.Path(sys.argv[2])
 if path.exists():
     data = yaml.safe_load(path.read_text()) or {}
 else:
@@ -43,6 +53,15 @@ if not isinstance(clarify, dict):
     clarify = {}
     data["clarify"] = clarify
 clarify["timeout"] = no_countdown_timeout
+
+with managed_path.open() as f:
+    managed = yaml.safe_load(f) or {}
+if not isinstance(managed, dict):
+    managed = {}
+data["mcp_servers"] = managed.get("mcp_servers", {})
+# Hermes' native MCP client reads mcp_servers. Drop a stale camelCase key if a
+# previous config writer produced one, so the active config is unambiguous.
+data.pop("mcpServers", None)
 
 path.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False))
 PY

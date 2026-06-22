@@ -1,7 +1,10 @@
 { config, pkgs, inputs, lib, ... }:
 let
   fonts = import ../../assets/fonts { inherit pkgs; };
-  tailnetNoProxy = "127.0.0.1,localhost,.tailnet.tomandjerry2026.xyz,desktop.tailnet.tomandjerry2026.xyz,100.64.0.0/10,fd7a:115c:a1e0::/48";
+  # Keep NO_PROXY entries to host/domain names and IPv4 CIDRs.  Python httpx
+  # treats IPv6 CIDR literals here as host:port strings and raises e.g.
+  # "Invalid port: '115c:a1e0::'", which breaks Hermes auxiliary calls.
+  tailnetNoProxy = "127.0.0.1,localhost,.tailnet.tomandjerry2026.xyz,desktop.tailnet.tomandjerry2026.xyz,100.64.0.0/10";
 in
 {
   imports = [
@@ -10,6 +13,7 @@ in
     ../../system/base/sudo-askpass.nix
     ../../system/base/users.nix
     ../../system/base/locale.nix
+    ../../system/base/input-method.nix
     ../../system/base/nix-settings.nix
     ../../system/base/fonts.nix
     ../../system/desktop/niri.nix
@@ -22,7 +26,7 @@ in
     ../../system/services/sshfs.nix
     ../../system/services/openlist.nix
     ../../system/services/cloudflared-openlist.nix
-    ../../hermes
+    ../../home/apps/hermes/system.nix
     ../../system/services/office-tools.nix
   ];
 

@@ -19,6 +19,12 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # Allow agentmemory's upstream iii-engine binary to run on NixOS. The npm
+  # package downloads a generic dynamically-linked Linux ELF whose interpreter
+  # is /lib64/ld-linux-x86-64.so.2; nix-ld provides the compatible loader and
+  # default runtime library set declaratively.
+  programs.nix-ld.enable = true;
+
   # Keep the conventional NixOS config path writable and pointed at the live
   # user-owned flake checkout instead of a stale / missing location.
   system.activationScripts.nixosSourceLink.text = ''

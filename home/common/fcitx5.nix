@@ -1,8 +1,0 @@
-{ config, pkgs, ... }:
-
-{
-  home.sessionVariables = {
-    QT_IM_MODULE = "fcitx5";
-    XMODIFIERS = "@im=fcitx5";
-  };
-}

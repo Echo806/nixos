@@ -102,7 +102,7 @@ let
     while true; do
       sync_x_to_wl || true
       sync_wl_to_x || true
-      "$SLEEP" 0.3
+      "$SLEEP" 2.5
     done
   '';
 in

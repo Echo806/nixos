@@ -4,7 +4,6 @@
   imports = [
     ../common/shell.nix
     ../common/git.nix
-    ../common/fcitx5.nix
     ../apps/chrome.nix
     ../apps/qq.nix
     ../apps/wechat.nix
@@ -13,11 +12,12 @@
     ../apps/steam.nix
     ../apps/vscode.nix
     ../apps/codex.nix
+    ../agent/memory/agentmemory.nix
     ../apps/ghostty.nix
     ../apps/neovim/default.nix
     ../apps/fastfetch.nix
     ../apps/claude-code.nix
-    ../apps/hermes.nix
+    ../apps/hermes/default.nix
     ../apps/libreoffice.nix
     ../apps/tailscale.nix
     ../apps/sunshine.nix
@@ -27,6 +27,7 @@
     ../apps/localsend.nix
     ../apps/nautilus.nix
     ../apps/sshfs.nix
+    ../apps/motrix-next.nix
   ];
 
   home.username = "run";

@@ -14,7 +14,8 @@
 
   systemd.services.openlist = {
     description = "OpenList file listing service";
-    wantedBy = [ "multi-user.target" ];
+    # Keep the service/package/config available, but do not start at boot.
+    # Start manually when needed with: sudo systemctl start openlist
     after = [ "network-online.target" ];
     wants = [ "network-online.target" ];
     serviceConfig = {
@@ -27,6 +28,13 @@
       RestartSec = "5s";
     };
   };
+
+  # Let the openlist service account list /home/run when the Local storage root
+  # points there. Keep the home directory non-world-readable, but grant this
+  # one service user read/traverse access declaratively.
+  systemd.tmpfiles.rules = [
+    "a /home/run - - - - u::rwx,u:openlist:rx,g::--x,m::rx,o::--x"
+  ];
 
   # OpenList default HTTP port. This makes it reachable on LAN/tailnet for the
   # experiment; do not expose it directly to the public Internet.

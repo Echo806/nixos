@@ -8,6 +8,7 @@ in
     ../../system/base/sudo-askpass.nix
     ../../system/base/users.nix
     ../../system/base/locale.nix
+    ../../system/base/input-method.nix
     ../../system/base/nix-settings.nix
     ../../system/base/fonts.nix
     ../../system/desktop/niri.nix
@@ -19,7 +20,7 @@ in
     ../../system/services/printing.nix
     ../../system/services/sshfs.nix
     ../../system/services/samba.nix
-    ../../hermes
+    ../../home/apps/hermes/system.nix
     ../../system/services/office-tools.nix
   ];
 

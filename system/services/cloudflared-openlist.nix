@@ -14,7 +14,8 @@
 
   systemd.services.cloudflared-openlist = {
     description = "Cloudflare Tunnel for OpenList at runrunnas.ccwu.cc";
-    wantedBy = [ "multi-user.target" ];
+    # Keep the tunnel unit available, but do not start it at boot.
+    # Start manually when needed with: sudo systemctl start cloudflared-openlist
     after = [ "network-online.target" "openlist.service" ];
     wants = [ "network-online.target" "openlist.service" ];
     unitConfig.ConditionPathExists = "/var/lib/cloudflared/openlist-token";

@@ -1,8 +1,8 @@
-{ config, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 let
-  state = ./.;
-  skills = import ../agent/skills { inherit pkgs; };
-  mcpServers = import ../agent/mcp/servers.nix;
+  state = ../../apps/hermes;
+  skills = import ../skills { inherit pkgs; };
+  mcpServers = import ../mcp/servers.nix;
 
   memorySeed = pkgs.runCommand "hermes-memory-seed" { } ''
     set -euo pipefail
@@ -11,9 +11,14 @@ let
     cp ${state}/memory/memory.md "$out/memories/memory.md"
   '';
 
-  chrome-remote = pkgs.callPackage ../agent/tools/bb-browser/chrome-wrapper.nix { };
+  chrome-remote = pkgs.callPackage ../tools/bb-browser/chrome-wrapper.nix { };
 in
 {
+  imports = [
+    inputs.hermes-agent.nixosModules.default
+    ../tools/bb-browser/daemon-service.nix
+  ];
+
   users.groups.hermes = { };
   users.users.hermes = {
     isSystemUser = true;
@@ -21,11 +26,6 @@ in
     home = "/var/lib/hermes";
     createHome = true;
   };
-
-  imports = [
-    inputs.hermes-agent.nixosModules.default
-    ../agent/tools/bb-browser/daemon-service.nix
-  ];
 
   systemd.tmpfiles.rules = [
     "d /var/lib/hermes 0755 hermes hermes - -"
@@ -74,8 +74,9 @@ in
         destructive_slash_confirm = true;
       };
       clarify.timeout = 2147483647;
-      inherit mcpServers;
     };
+
+    mcpServers = mcpServers;
 
     # 密钥走环境文件（/var/lib/hermes/env），不在 Git 中跟踪
     environmentFiles = [ "/var/lib/hermes/env" ];
@@ -86,6 +87,7 @@ in
     pkgs.bb-browser
     pkgs.cli-anything-hub
     pkgs.google-chrome
+    pkgs.nodejs
     chrome-remote
   ];
 }
