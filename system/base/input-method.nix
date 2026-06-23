@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, inputs, lib, pkgs, ... }:
 
 let
   # Rime schemas / dictionaries that should be available system-wide.
@@ -49,12 +49,7 @@ let
       (name: entries.${name} == "regular")
       (builtins.attrNames entries);
 
-  iorestRimeDict = pkgs.fetchFromGitHub {
-    owner = "Iorest";
-    repo = "rime-dict";
-    rev = "a2057baecf53e5a45dfd5b72f1ec50773d8c9271";
-    hash = "sha256-8XkMAy2PLu17kWexU9il6jPQNaDQ3IujFbr2bLno1QM=";
-  };
+  iorestRimeDict = inputs.iorest-rime-dict;
 
   # Iorest/rime-dict is mostly Traditional Chinese. Convert its .dict.yaml files
   # to Simplified at build time so the full bundle works naturally with the

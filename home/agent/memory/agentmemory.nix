@@ -10,7 +10,7 @@
 
     Service = {
       Type = "simple";
-      ExecStart = "${pkgs.nodejs}/bin/npx -y @agentmemory/agentmemory@latest";
+      ExecStart = "${pkgs.agentmemory}/bin/agentmemory";
       Restart = "on-failure";
       RestartSec = 5;
       Environment = [

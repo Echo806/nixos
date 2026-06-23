@@ -1,17 +1,17 @@
-{ config, inputs, lib, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 let
   agentLib = import ../lib.nix { inherit lib; };
   mcpServers = import ../mcp/servers.nix;
   managedMcpToml = agentLib.renderCodexMcpServers mcpServers;
   python = pkgs.python3.withPackages (ps: [ ps.tomli ps.tomli-w ]);
-  unstablePkgs = inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
 in
 {
-  home.packages = [
-    unstablePkgs.codex
-    pkgs.nodejs
-    pkgs.bb-browser
-    pkgs.cli-anything-hub
+  home.packages = with pkgs; [
+    codex
+    nodejs
+    bb-browser
+    agentmemory
+    cli-anything-hub
   ];
 
   home.file.".codex/managed-mcp.toml".text = managedMcpToml + "\n";

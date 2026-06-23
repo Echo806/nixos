@@ -13,6 +13,31 @@
 
     hermes-agent.url = "github:NousResearch/hermes-agent";
 
+    agency-agents = {
+      url = "github:msitarzewski/agency-agents";
+      flake = false;
+    };
+
+    superpowers = {
+      url = "github:obra/superpowers";
+      flake = false;
+    };
+
+    anthropic-skills = {
+      url = "github:anthropics/skills";
+      flake = false;
+    };
+
+    openai-skills = {
+      url = "github:openai/skills";
+      flake = false;
+    };
+
+    iorest-rime-dict = {
+      url = "github:Iorest/rime-dict";
+      flake = false;
+    };
+
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,14 +51,36 @@
 
   outputs = inputs@{ self, nixpkgs, nixpkgs-x250-legacy, home-manager, nixos-hardware, noctalia, ... }:
     let
+      localOverlays = [
+        (final: prev: {
+          maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
+          windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
+          bb-browser = prev.callPackage ./home/agent/tools/bb-browser { };
+          agentmemory = prev.callPackage ./home/agent/tools/agentmemory { };
+          claude-code = prev.callPackage ./home/agent/tools/claude-code { };
+          codex = prev.callPackage ./home/agent/tools/codex { };
+          opencode = prev.callPackage ./home/agent/tools/opencode { };
+          cli-anything-hub = prev.callPackage ./home/agent/tools/cli-anything-hub.nix { };
+        })
+      ];
       mkHomeManager = homeHostPath: {
-        home-manager.useGlobalPkgs = true;
+        home-manager.useGlobalPkgs = false;
         home-manager.useUserPackages = true;
-        home-manager.users.run.imports = [
-          noctalia.homeModules.default
-          homeHostPath
-        ];
-        home-manager.extraSpecialArgs = { inherit inputs; };
+        home-manager.users.run = { pkgs, ... }: {
+          _module.args.pkgsPath = inputs.nixpkgs;
+          nixpkgs = {
+            config.allowUnfree = true;
+            overlays = localOverlays;
+          };
+          imports = [
+            noctalia.homeModules.default
+            homeHostPath
+          ];
+        };
+        home-manager.extraSpecialArgs = {
+          inherit inputs;
+          lib = import (inputs.home-manager.outPath + "/modules/lib/stdlib-extended.nix") inputs.nixpkgs.lib;
+        };
       };
     in
     {
@@ -44,14 +91,7 @@
           specialArgs = { inherit inputs; pkgsUnstable = nixpkgs.legacyPackages.x86_64-linux; };
           modules = [
             ({ ... }: {
-              nixpkgs.overlays = [
-                (final: prev: {
-                  maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
-                  windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
-                  bb-browser = prev.callPackage ./home/agent/tools/bb-browser { };
-                  cli-anything-hub = prev.callPackage ./home/agent/tools/cli-anything-hub.nix { };
-                })
-              ];
+              nixpkgs.overlays = localOverlays;
             })
             ./hosts/x250
             home-manager.nixosModules.home-manager
@@ -74,14 +114,7 @@
           specialArgs = { inherit inputs; };
           modules = [
             ({ ... }: {
-              nixpkgs.overlays = [
-                (final: prev: {
-                  maple-mono-custom = prev.callPackage ./assets/fonts/maple-mono-custom { };
-                  windows-fonts = prev.callPackage ./assets/fonts/windows-fonts { };
-                  bb-browser = prev.callPackage ./home/agent/tools/bb-browser { };
-                  cli-anything-hub = prev.callPackage ./home/agent/tools/cli-anything-hub.nix { };
-                })
-              ];
+              nixpkgs.overlays = localOverlays;
             })
             ./hosts/runrun
             home-manager.nixosModules.home-manager

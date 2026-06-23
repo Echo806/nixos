@@ -209,7 +209,6 @@ in
     // 自启动
     spawn-at-startup "xwayland-satellite"
     spawn-at-startup "tray-niri-activation"
-    spawn-at-startup "noctalia-shell"
     spawn-at-startup "fcitx5" "-d"
     spawn-at-startup "polkit-gnome-authentication-agent-1"
     spawn-at-startup "nm-applet"

@@ -1,32 +1,9 @@
-{ pkgs }:
+{ inputs, pkgs }:
 let
-  agencyAgents = pkgs.fetchFromGitHub {
-    owner = "msitarzewski";
-    repo = "agency-agents";
-    rev = "783f6a72bfd7f3135700ac273c619d92821b419a";
-    hash = "sha256-FMjC1w6631Y4Aiz4O4UW2zK4EDUvOub/dsnxoKto1pw=";
-  };
-
-  superpowers = pkgs.fetchFromGitHub {
-    owner = "obra";
-    repo = "superpowers";
-    rev = "f2cbfbefebbfef77321e4c9abc9e949826bea9d7";
-    hash = "sha256-3E3rO6hR87JUfS3XV1Eaoz6SDWOftleWvN9UPNFEMjw=";
-  };
-
-  anthropicOfficialSkills = pkgs.fetchFromGitHub {
-    owner = "anthropics";
-    repo = "skills";
-    rev = "690f15cac7f7b4c055c5ab109c79ed9259934081";
-    hash = "sha256-GMXFJSePrpEvhzMQ82YI9Z10BDkuFK/lXUDELclvQ4c=";
-  };
-
-  openaiOfficialSkills = pkgs.fetchFromGitHub {
-    owner = "openai";
-    repo = "skills";
-    rev = "b0401f07213a66414d84a65cb50c1d226f99485a";
-    hash = "sha256-MpXYiPBzQTBCXN7Hw36qBG82cKqW9havnbCw7JHeSJI=";
-  };
+  agencyAgents = inputs.agency-agents;
+  superpowers = inputs.superpowers;
+  anthropicOfficialSkills = inputs.anthropic-skills;
+  openaiOfficialSkills = inputs.openai-skills;
 
   officeDocumentSkills = pkgs.runCommand "hermes-office-document-skills" { } ''
     set -euo pipefail

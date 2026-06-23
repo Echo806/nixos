@@ -1,5 +1,37 @@
 {
   "nodes": {
+    "agency-agents": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782163839,
+        "narHash": "sha256-SnKaMkyLvKxmxY88PDpso/scyGvbIHw4Cnyb1IKCcbY=",
+        "owner": "msitarzewski",
+        "repo": "agency-agents",
+        "rev": "1189f0f9bc79a1883fee958fed627c6d11581eb7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "msitarzewski",
+        "repo": "agency-agents",
+        "type": "github"
+      }
+    },
+    "anthropic-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781037316,
+        "narHash": "sha256-1D9otXxDvmKASBu/vtAEWv6kE+U+jG4OxZpRLZbGEF0=",
+        "owner": "anthropics",
+        "repo": "skills",
+        "rev": "57546260929473d4e0d1c1bb75297be2fdfa1949",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anthropics",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "blueprint": {
       "inputs": {
         "nixpkgs": [
@@ -131,17 +163,33 @@
         ]
       },
       "locked": {
-        "lastModified": 1778009629,
-        "narHash": "sha256-nUoQtf4Zq7DRYJrfv904hjrxjAlWVP6a1pNNFKx3FCg=",
+        "lastModified": 1782134359,
+        "narHash": "sha256-dh0RDcJ17Rubgk3hGTugYmTu6rnUPfRu5vA7MA1Pdo0=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "00ed86e58bb6979a7921859fd1615d19382eac5c",
+        "rev": "979bfee6e1a7996fc395270d54c9b59e88762494",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "ref": "master",
         "repo": "home-manager",
+        "type": "github"
+      }
+    },
+    "iorest-rime-dict": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773451851,
+        "narHash": "sha256-8XkMAy2PLu17kWexU9il6jPQNaDQ3IujFbr2bLno1QM=",
+        "owner": "Iorest",
+        "repo": "rime-dict",
+        "rev": "a2057baecf53e5a45dfd5b72f1ec50773d8c9271",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Iorest",
+        "repo": "rime-dict",
         "type": "github"
       }
     },
@@ -313,6 +361,22 @@
         "type": "github"
       }
     },
+    "openai-skills": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782160597,
+        "narHash": "sha256-yHrXQudq7pOeLLLAYYrAVL7CK/quyBxUlSp2SG62rt8=",
+        "owner": "openai",
+        "repo": "skills",
+        "rev": "778b0e6129cf18cbaee3bf11479f583fadae8d03",
+        "type": "github"
+      },
+      "original": {
+        "owner": "openai",
+        "repo": "skills",
+        "type": "github"
+      }
+    },
     "pyproject-build-systems": {
       "inputs": {
         "nixpkgs": [
@@ -403,13 +467,34 @@
     },
     "root": {
       "inputs": {
+        "agency-agents": "agency-agents",
+        "anthropic-skills": "anthropic-skills",
         "hermes-agent": "hermes-agent",
         "home-manager": "home-manager",
+        "iorest-rime-dict": "iorest-rime-dict",
         "llm-agents": "llm-agents",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-x250-legacy": "nixpkgs-x250-legacy",
-        "noctalia": "noctalia"
+        "noctalia": "noctalia",
+        "openai-skills": "openai-skills",
+        "superpowers": "superpowers"
+      }
+    },
+    "superpowers": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1781822662,
+        "narHash": "sha256-+lT2a/qq0SF4k0PgnEDKiuidVlZX2p0vEso4d/5T1os=",
+        "owner": "obra",
+        "repo": "superpowers",
+        "rev": "896224c4b1879920ab573417e68fd51d2ccc9072",
+        "type": "github"
+      },
+      "original": {
+        "owner": "obra",
+        "repo": "superpowers",
+        "type": "github"
       }
     },
     "systems": {

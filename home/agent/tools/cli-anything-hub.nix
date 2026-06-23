@@ -1,31 +1,41 @@
 { lib
-, python3Packages
-, fetchurl
+, stdenvNoCC
+, makeWrapper
+, python3
+, uv
 }:
 
-python3Packages.buildPythonApplication rec {
+stdenvNoCC.mkDerivation {
   pname = "cli-anything-hub";
-  version = "0.3.0";
-  pyproject = true;
+  version = "pypi-latest";
 
-  src = fetchurl {
-    url = "https://files.pythonhosted.org/packages/64/1d/bee957acb19850d175ff3b2c48344ebc0678071b20d5ca1bf013b09d78a1/cli_anything_hub-0.3.0.tar.gz";
-    hash = "sha256-d60dHprp+oCnkdG1R6/dN4Z8xBJJiOH6vNOALkysOR8=";
-  };
+  dontUnpack = true;
 
-  build-system = with python3Packages; [
-    setuptools
+  nativeBuildInputs = [
+    makeWrapper
   ];
 
-  dependencies = with python3Packages; [
-    click
-    requests
-  ];
+  installPhase = ''
+    runHook preInstall
 
-  pythonImportsCheck = [ "cli_hub" ];
+    mkdir -p $out/bin
+
+    makeWrapper ${uv}/bin/uv $out/bin/cli-hub \
+      --set UV_NO_PROGRESS true \
+      --set UV_PYTHON_DOWNLOADS never \
+      --set UV_PYTHON ${python3}/bin/python3 \
+      --add-flags "tool" \
+      --add-flags "run" \
+      --add-flags "--no-config" \
+      --add-flags "--from" \
+      --add-flags "cli-anything-hub@latest" \
+      --add-flags "cli-hub"
+
+    runHook postInstall
+  '';
 
   meta = {
-    description = "Package manager for CLI-Anything agent-friendly CLI harnesses";
+    description = "Latest CLI-Anything hub from PyPI, wrapped for NixOS";
     homepage = "https://clianything.cc";
     license = lib.licenses.mit;
     mainProgram = "cli-hub";

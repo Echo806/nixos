@@ -1,7 +1,7 @@
 { config, lib, pkgs, inputs, ... }:
 let
   state = ../../apps/hermes;
-  skills = import ../skills { inherit pkgs; };
+  skills = import ../skills { inherit inputs pkgs; };
   mcpServers = import ../mcp/servers.nix;
 
   memorySeed = pkgs.runCommand "hermes-memory-seed" { } ''
@@ -85,6 +85,7 @@ in
   environment.systemPackages = [
     inputs.hermes-agent.packages.${pkgs.stdenv.hostPlatform.system}.default
     pkgs.bb-browser
+    pkgs.agentmemory
     pkgs.cli-anything-hub
     pkgs.google-chrome
     pkgs.nodejs

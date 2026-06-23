@@ -177,4 +177,21 @@ in
       ${pkgs.coreutils}/bin/cp --no-preserve=mode "$store" "$s"
     fi
   '';
+
+  systemd.user.services.noctalia-shell = {
+    Unit = {
+      Description = "Noctalia Shell";
+      After = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+
+    Service = {
+      Type = "simple";
+      ExecStart = "${noctaliaShell}/bin/noctalia-shell";
+      Restart = "on-failure";
+      RestartSec = 3;
+    };
+
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
 }
