@@ -9,7 +9,9 @@ let
     chmod u+w \
       $out/share/noctalia-shell/Modules/Bar/Widgets/Tray.qml \
       $out/share/noctalia-shell/Modules/Panels/Tray/TrayDrawerPanel.qml \
-      $out/share/noctalia-shell/Modules/Bar/Extras/TrayMenu.qml
+      $out/share/noctalia-shell/Modules/Bar/Extras/TrayMenu.qml \
+      $out/share/noctalia-shell/Services/Location/LocationService.qml \
+      $out/share/noctalia-shell/Modules/Cards/WeatherCard.qml
 
     python3 - <<'PY'
 import os
@@ -19,6 +21,8 @@ out = Path(os.environ["out"])
 tray = out / "share/noctalia-shell/Modules/Bar/Widgets/Tray.qml"
 drawer = out / "share/noctalia-shell/Modules/Panels/Tray/TrayDrawerPanel.qml"
 menu = out / "share/noctalia-shell/Modules/Bar/Extras/TrayMenu.qml"
+location = out / "share/noctalia-shell/Services/Location/LocationService.qml"
+weather_card = out / "share/noctalia-shell/Modules/Cards/WeatherCard.qml"
 
 func = """
   function trayDisplayName(item) {
@@ -76,6 +80,93 @@ patch_once(menu, '  readonly property QsMenuHandle menu: isSubMenu ? null : (tra
 text = menu.read_text()
 text = text.replace('const itemName = trayItem.tooltipTitle || trayItem.name || trayItem.id || "";', 'const itemName = root.trayDisplayName(trayItem);')
 menu.write_text(text)
+
+patch_once(
+    location,
+    'const needsWeatherUpdate = (adapter.weatherLastFetch === "") || (adapter.weather === null) || (Time.timestamp >= adapter.weatherLastFetch + weatherUpdateFrequency);',
+    'const needsWeatherUpdate = (adapter.weatherLastFetch === "") || (adapter.weather === null) || !adapter.weather.hourly || (Time.timestamp >= adapter.weatherLastFetch + weatherUpdateFrequency);',
+)
+patch_once(
+    location,
+    'var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&current_weather=true&current=relativehumidity_2m,surface_pressure,is_day&daily=temperature_2m_max,temperature_2m_min,weathercode,sunset,sunrise&timezone=auto";',
+    'var url = "https://api.open-meteo.com/v1/forecast?latitude=" + latitude + "&longitude=" + longitude + "&models=cma_grapes_global&current_weather=true&current=relativehumidity_2m,surface_pressure,is_day&hourly=temperature_2m,weathercode,precipitation_probability&daily=temperature_2m_max,temperature_2m_min,weathercode,sunset,sunrise&timezone=auto";',
+)
+
+hourly_helpers = """
+  property int forecastStepHours: 2
+
+  function hourlyForecastModel() {
+    if (!weatherReady || !LocationService.data.weather.hourly || !LocationService.data.weather.hourly.time)
+      return [];
+
+    const hourly = LocationService.data.weather.hourly;
+    const times = hourly.time || [];
+    const codes = hourly.weathercode || [];
+    const temps = hourly.temperature_2m || [];
+    const now = Date.now();
+    let start = 0;
+
+    for (let i = 0; i < times.length; i++) {
+      const t = Date.parse(times[i]);
+      if (!isNaN(t) && t >= now) {
+        start = i;
+        break;
+      }
+    }
+
+    const result = [];
+    for (let i = start; i < times.length && result.length < root.forecastDays; i += root.forecastStepHours) {
+      let temp = temps[i] ?? 0;
+      if (Settings.data.location.useFahrenheit)
+        temp = LocationService.celsiusToFahrenheit(temp);
+
+      result.push({
+        "time": times[i],
+        "weathercode": codes[i] ?? 0,
+        "temperature": Math.round(temp)
+      });
+    }
+    return result;
+  }
+"""
+
+patch_once(
+    weather_card,
+    '  // Weather condition detection',
+    hourly_helpers + '\n  // Weather condition detection',
+)
+text = weather_card.read_text()
+text = text.replace(
+    'model: weatherReady ? Math.min(root.forecastDays, LocationService.data.weather.daily.time.length) : 0',
+    'model: root.hourlyForecastModel()',
+)
+text = text.replace(
+    """              var weatherDate = new Date(LocationService.data.weather.daily.time[index].replace(/-/g, "/"));
+              return I18n.locale.toString(weatherDate, "ddd");""",
+    """              var weatherDate = new Date(modelData.time);
+              return I18n.locale.toString(weatherDate, Settings.data.location.use12hourFormat ? "h AP" : "HH:mm");""",
+)
+text = text.replace(
+    'icon: LocationService.weatherSymbolFromCode(LocationService.data.weather.daily.weathercode[index])',
+    'icon: LocationService.weatherSymbolFromCode(modelData.weathercode)',
+)
+text = text.replace(
+    'source: Qt.resolvedUrl(LocationService.taliaWeatherImageFromCode(LocationService.data.weather.daily.weathercode[index]))',
+    'source: Qt.resolvedUrl(LocationService.taliaWeatherImageFromCode(modelData.weathercode))',
+)
+text = text.replace(
+    """              var max = LocationService.data.weather.daily.temperature_2m_max[index];
+              var min = LocationService.data.weather.daily.temperature_2m_min[index];
+              if (Settings.data.location.useFahrenheit) {
+                max = LocationService.celsiusToFahrenheit(max);
+                min = LocationService.celsiusToFahrenheit(min);
+              }
+              max = Math.round(max);
+              min = Math.round(min);
+              return `''${max}°/''${min}°`;""",
+    """              return modelData.temperature + "°";""",
+)
+weather_card.write_text(text)
 PY
 
     # The upstream noctalia-shell executable is a binary wrapper that embeds
