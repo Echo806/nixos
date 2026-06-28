@@ -1,52 +1,12 @@
-{ lib
-, stdenvNoCC
-, makeWrapper
-, nodejs_22
-}:
+{ lib, callPackage, ... }:
 
-stdenvNoCC.mkDerivation {
+callPackage ../cached-tool-wrapper.nix {
   pname = "bb-browser";
-  version = "npm-latest";
-
-  dontUnpack = true;
-
-  nativeBuildInputs = [
-    makeWrapper
+  bins = [
+    { name = "bb-browser"; }
+    { name = "bb-browser-daemon"; }
   ];
-
-  installPhase = ''
-    runHook preInstall
-
-    mkdir -p $out/bin
-
-    makeWrapper ${nodejs_22}/bin/npm $out/bin/bb-browser \
-      --set NPM_CONFIG_UPDATE_NOTIFIER false \
-      --set NPM_CONFIG_FUND false \
-      --add-flags "exec" \
-      --add-flags "--yes" \
-      --add-flags "--package" \
-      --add-flags "bb-browser@latest" \
-      --add-flags "--" \
-      --add-flags "bb-browser"
-
-    makeWrapper ${nodejs_22}/bin/npm $out/bin/bb-browser-daemon \
-      --set NPM_CONFIG_UPDATE_NOTIFIER false \
-      --set NPM_CONFIG_FUND false \
-      --add-flags "exec" \
-      --add-flags "--yes" \
-      --add-flags "--package" \
-      --add-flags "bb-browser@latest" \
-      --add-flags "--" \
-      --add-flags "bb-browser-daemon"
-
-    runHook postInstall
-  '';
-
-  meta = {
-    description = "Latest bb-browser CLI from npm, wrapped for NixOS";
-    homepage = "https://github.com/epiral/bb-browser";
-    license = lib.licenses.mit;
-    mainProgram = "bb-browser";
-    platforms = lib.platforms.linux;
-  };
+  description = "Cached latest bb-browser CLI and daemon, updated by agent-tools-update";
+  homepage = "https://github.com/epiral/bb-browser";
+  license = lib.licenses.mit;
 }

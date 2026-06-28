@@ -87,6 +87,9 @@ in
     pkgs.bb-browser
     pkgs.agentmemory
     pkgs.cli-anything-hub
+    pkgs.agent-tools-update
+    pkgs.nixos-update
+    pkgs.mcp-nixos
     pkgs.google-chrome
     pkgs.nodejs
     chrome-remote

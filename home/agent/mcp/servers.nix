@@ -1,7 +1,7 @@
 {
   "mcp-nixos" = {
-    command = "/run/current-system/sw/bin/nix";
-    args = [ "run" "nixpkgs#mcp-nixos" ];
+    command = "/run/current-system/sw/bin/mcp-nixos";
+    args = [ ];
   };
 
   "agentmemory" = {

@@ -12,9 +12,65 @@ in
     bb-browser
     agentmemory
     cli-anything-hub
+    agent-tools-update
+    nixos-update
   ];
 
   home.file.".codex/managed-mcp.toml".text = managedMcpToml + "\n";
+
+  home.file.".config/agent-tools/README.md".text = ''
+    # Agent tool update lists
+
+    `nixos-update` updates Nix-managed applications, skills, and these cached agent tools.
+
+    Built-in npm tools:
+    - @openai/codex@latest
+    - @anthropic-ai/claude-code@latest
+    - opencode-ai@latest
+    - bb-browser@latest
+    - @agentmemory/agentmemory@latest
+    - @agentmemory/mcp@latest
+
+    Built-in uv tools:
+    - cli-anything-hub
+
+    To add future npm-backed agent tools, create or edit:
+
+    ```text
+    ~/.config/agent-tools/npm-packages.txt
+    ```
+
+    Add one npm package spec per line, for example:
+
+    ```text
+    some-agent-cli@latest
+    @scope/tool@latest
+    ```
+
+    To add future uv/PyPI-backed agent tools, create or edit:
+
+    ```text
+    ~/.config/agent-tools/uv-tools.txt
+    ```
+
+    Add one package per line, for example:
+
+    ```text
+    some-python-cli
+    ```
+
+    After editing either file, run:
+
+    ```bash
+    agent-tools-update
+    ```
+
+    Run an extra cached binary with:
+
+    ```bash
+    agent-tool <binary-name>
+    ```
+  '';
 
   # Codex discovers SKILL.md files under ~/.codex/skills. Point one native
   # Codex skill root at the normal run user's Hermes skills so user-created or

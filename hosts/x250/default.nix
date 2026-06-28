@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, lib, ... }:
+{ config, pkgs, inputs, ... }:
 let
   fonts = import ../../assets/fonts { inherit pkgs; };
   # Keep NO_PROXY entries to host/domain names and IPv4 CIDRs.  Python httpx
@@ -37,49 +37,9 @@ in
   # LTS 内核
   boot.kernelPackages = pkgs.linuxPackages_6_12;
 
-  # Keep the normal boot path on scripted initrd for now: systemd initrd
-  # previously crashed on this ThinkPad X250 Broadwell.  NixOS warns that
-  # scripted initrd is deprecated, so expose a separate boot-menu test entry
-  # below before changing the default.
+  # Keep the normal boot path on scripted initrd: systemd initrd previously
+  # crashed on this ThinkPad X250 Broadwell.
   boot.initrd.systemd.enable = false;
-
-  specialisation.systemd-initrd-test.configuration = {
-    # Boot-menu-only test generation.  The default x250 entry remains on the
-    # known-good scripted initrd, so a failed test can be recovered by simply
-    # rebooting into the normal/default generation.
-    # Current hypothesis for the no-log black screen: systemd initrd's default
-    # TPM2/FIDO2 early-boot integration may hang on this old X250 firmware/TPM
-    # before systemd can show status or persist logs. Keep the normal/default
-    # boot entry unchanged; disable these only in this diagnostic entry.
-    boot.initrd.systemd = {
-      enable = lib.mkForce true;
-      tpm2.enable = lib.mkForce false;
-      fido2.enable = lib.mkForce false;
-      # If stage-1 fails, drop to an unauthenticated initrd emergency shell
-      # instead of silently hanging on a black screen.  This applies only to
-      # this specialisation test entry, not the normal/default boot entry.
-      emergencyAccess = lib.mkForce true;
-    };
-    boot.consoleLogLevel = lib.mkForce 7;
-    boot.kernelParams = [
-      # QEMU can start this same kernel/initrd and reaches systemd initrd,
-      # while the real X250 still goes black before any persistent journal.
-      # Test the display/KMS hypothesis next: keep early boot on firmware
-      # framebuffer instead of allowing i915 KMS takeover in initrd.
-      "nomodeset"
-      "debug"
-      "console=tty0"
-      "systemd.crash_chvt=1"
-      "systemd.default_standard_output=journal+console"
-      "systemd.default_standard_error=journal+console"
-      "systemd.log_level=debug"
-      "systemd.log_target=console"
-      "systemd.show_status=1"
-      "rd.systemd.debug_shell=tty9"
-      "rd.systemd.default_debug_tty=tty9"
-      "rd.systemd.break=pre-mount"
-    ];
-  };
 
   # Networking
   networking.hostName = "x250";

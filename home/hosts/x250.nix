@@ -24,11 +24,11 @@
     ../apps/moonlight-qt.nix
     ../apps/typora.nix
     ../apps/yazi.nix
-    ../apps/opencode.nix
     ../apps/localsend.nix
     ../apps/nautilus.nix
     ../apps/sshfs.nix
     ../apps/motrix-next.nix
+    ../apps/wemeet.nix
   ];
 
   home.username = "run";

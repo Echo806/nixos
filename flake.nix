@@ -39,7 +39,10 @@
     };
 
     noctalia = {
-      url = "github:noctalia-dev/noctalia-shell";
+      # Keep the Quickshell/QML-based Noctalia generation for now. Newer
+      # upstream revisions renamed the module to programs.noctalia and moved
+      # away from the noctalia-shell/QS_CONFIG_PATH layout used by our config.
+      url = "github:noctalia-dev/noctalia-shell/7d0357683121ebb2551e6204dc3aa41caa3bbef4";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -61,6 +64,8 @@
           codex = prev.callPackage ./home/agent/tools/codex { };
           opencode = prev.callPackage ./home/agent/tools/opencode { };
           cli-anything-hub = prev.callPackage ./home/agent/tools/cli-anything-hub.nix { };
+          agent-tools-update = prev.callPackage ./home/agent/tools/agent-tools-update.nix { };
+          nixos-update = final.callPackage ./home/agent/tools/nixos-update.nix { };
         })
       ];
       mkHomeManager = homeHostPath: {

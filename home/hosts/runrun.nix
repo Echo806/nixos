@@ -28,6 +28,7 @@
     ../apps/nautilus.nix
     ../apps/sshfs.nix
     ../apps/motrix-next.nix
+
   ];
 
   home.username = "run";

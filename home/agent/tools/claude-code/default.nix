@@ -1,42 +1,11 @@
-{ lib
-, stdenvNoCC
-, makeWrapper
-, nodejs_22
-}:
+{ lib, callPackage, ... }:
 
-stdenvNoCC.mkDerivation {
+callPackage ../cached-tool-wrapper.nix {
   pname = "claude-code";
-  version = "npm-latest";
-
-  dontUnpack = true;
-
-  nativeBuildInputs = [
-    makeWrapper
+  bins = [
+    { name = "claude"; }
   ];
-
-  installPhase = ''
-    runHook preInstall
-
-    mkdir -p $out/bin
-
-    makeWrapper ${nodejs_22}/bin/npm $out/bin/claude \
-      --set NPM_CONFIG_UPDATE_NOTIFIER false \
-      --set NPM_CONFIG_FUND false \
-      --add-flags "exec" \
-      --add-flags "--yes" \
-      --add-flags "--package" \
-      --add-flags "@anthropic-ai/claude-code@latest" \
-      --add-flags "--" \
-      --add-flags "claude"
-
-    runHook postInstall
-  '';
-
-  meta = {
-    description = "Latest Claude Code CLI from npm, wrapped for NixOS";
-    homepage = "https://github.com/anthropics/claude-code";
-    license = lib.licenses.unfree;
-    mainProgram = "claude";
-    platforms = lib.platforms.linux;
-  };
+  description = "Cached latest Claude Code CLI, updated by agent-tools-update";
+  homepage = "https://github.com/anthropics/claude-code";
+  license = lib.licenses.unfree;
 }
