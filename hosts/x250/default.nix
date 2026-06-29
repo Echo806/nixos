@@ -18,7 +18,7 @@ in
     ../../system/base/fonts.nix
     ../../system/desktop/niri.nix
     ../../system/desktop/clipboard-bridge.nix
-    ../../system/desktop/noctalia.nix
+    ../../system/desktop/noctalia-path.nix
     ../../system/hardware/bluetooth.nix
     ../../system/hardware/audio.nix
     ../../system/hardware/power.nix

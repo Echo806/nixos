@@ -538,19 +538,8 @@ in
         }
       ];
       states = {
-        catwalk = {
-          enabled = true;
-          sourceUrl = "https://github.com/noctalia-dev/noctalia-plugins";
-        };
       };
       version = 2;
-    };
-
-    pluginSettings = {
-      catwalk = {
-        minimumThreshold = 25;
-        hideBackground = true;
-      };
     };
   };
 

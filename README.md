@@ -90,10 +90,10 @@ clash-verge
 
 ### 1.3 Noctalia Shell 效果
 
-Noctalia 的系统级安装位于：
+Noctalia 的系统 PATH 桥接位于：
 
 ```text
-system/desktop/noctalia.nix
+system/desktop/noctalia-path.nix
 ```
 
 Home Manager 配置位于：
@@ -116,7 +116,6 @@ home/hosts/runrun.nix
 - 壁纸目录：`/home/run/nixos/assets/wallpapers`
 - 壁纸递归扫描：`viewMode = "recursive"`
 - 启用官方插件源：`https://github.com/noctalia-dev/noctalia-plugins`
-- 启用 catwalk 插件
 
 每台机器有自己的桌面小组件坐标：
 
@@ -398,7 +397,7 @@ catppuccin
 │   │   └── sudo-askpass.nix
 │   ├── desktop/
 │   │   ├── niri.nix
-│   │   └── noctalia.nix
+│   │   └── noctalia-path.nix
 │   ├── hardware/
 │   │   ├── audio.nix
 │   │   ├── bluetooth.nix
@@ -519,12 +518,13 @@ users.users.run = {
 | 文件 | 作用 |
 |---|---|
 | `niri.nix` | niri、SDDM、warpd、自启动、快捷键、输入法环境变量 |
-| `noctalia.nix` | 安装 Noctalia Shell flake 包 |
+| `noctalia-path.nix` | 将 Home Manager 使用的 Noctalia Shell 包暴露到系统 PATH，供 niri 快捷键调用 |
 
 模块化思路是：
 
 - niri 只负责窗口管理器、快捷键和桌面会话启动。
-- Noctalia 系统包单独安装。
+- Noctalia Shell 的包、设置和用户服务由 Home Manager 管理。
+- 系统层只暴露同一个 Noctalia 包到 PATH，避免 niri 调到另一份构建。
 - Noctalia 用户设置放在 Home Manager 的 `home/common/shell.nix` 和 `home/hosts/*.nix` 中。
 
 这样可以避免一个文件同时塞系统包、用户配置、主机坐标和应用列表。
